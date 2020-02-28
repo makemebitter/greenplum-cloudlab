@@ -1,4 +1,4 @@
-"""spark standalone WIP"""
+"""greenplum cluster WIP"""
 
 #
 # NOTE: This code was machine converted. An actual human would not
