@@ -11,7 +11,7 @@ import geni.portal as portal
 import geni.rspec.pg as pg
 # Import the Emulab specific extensions.
 import geni.rspec.emulab as emulab
-DISK_IMG = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD'
+DISK_IMG = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU16-64-STD'
 # Create a portal object,
 pc = portal.Context()
 

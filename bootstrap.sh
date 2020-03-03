@@ -93,10 +93,10 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 # -----------------------------------------------------------------------------
 
 # GPDB ppa ------------––------------------------------------------------------
-sudo add-apt-repository -y ppa:greenplum/db
-sudo apt update
-sudo apt install greenplum-db
-. /opt/greenplum-db-6.0.1/greenplum_path.sh
+# sudo add-apt-repository -y ppa:greenplum/db
+# sudo apt-get update
+# sudo apt-get install -y greenplum-db
+# sudo bash /opt/greenplum-db-6.0.1/greenplum_path.sh
 
 # Spark ips configs
 # ips=($(ip -4 addr | grep -oP '(?<=inet\s)\d+(\.\d+){3}'))
@@ -133,7 +133,7 @@ echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.p
 
 
 
-# Running Spark deamons
+# Running Jupyter deamons
 if [ "$duty" = "m" ]; then
 	sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /dev/null 2>&1 &
 	sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /dev/null 2>&1 &
