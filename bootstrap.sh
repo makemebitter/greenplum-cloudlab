@@ -2,6 +2,8 @@
 duty=${1}
 JUPYTER_PASSWORD=${2:-"root"}
 PRIVATE_KEY=${3}
+echo "PRIVATE KEY"
+echo "${PRIVATE_KEY}"
 set -e
 sudo apt-get update;
 sudo apt-get install -y openssh-server openssh-client syslinux-utils python3-pip socat;
@@ -23,8 +25,8 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 
 # ------------------------- build from src ------------------------------------
 # greenplum key
-echo $PRIVATE_KEY > /local/gpdb_key
-chmod 600 /local/gpdb_keys
+echo "${PRIVATE_KEY}" > /local/gpdb_key
+chmod 600 /local/gpdb_key
 # greenplum
 git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
 git clone https://github.com/greenplum-db/gporca.git /local/gporca
