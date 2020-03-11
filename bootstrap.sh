@@ -24,19 +24,18 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 
 
 # ------------------------- build from src ------------------------------------
-# greenplum key
-echo "${PRIVATE_KEY}" > /local/gpdb_key
-chmod 600 /local/gpdb_key
+
 # greenplum
+# ------------------------- system settings -----------------------------------
 git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
 git clone https://github.com/greenplum-db/gporca.git /local/gporca
 git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
-export DEBIAN_FRONTEND=noninteractive
+git clone https://github.com/apache/madlib.git /local/madlib
+
 sudo bash /local/gpdb_src/README.ubuntu.bash
 echo /usr/local/lib | sudo tee -a  /etc/ld.so.conf
 sudo ldconfig
-cd /local
-sudo bash gpdb_src/concourse/scripts/setup_gpadmin_user.bash
+sudo bash /local/gpdb_src/concourse/scripts/setup_gpadmin_user.bash
 sudo bash -c 'cat >> /etc/sysctl.conf <<-EOF
 kernel.shmmax = 500000000
 kernel.shmmni = 4096
@@ -73,35 +72,17 @@ sudo bash -c 'cat >> /etc/ld.so.conf <<-EOF
 
 EOF'
 
-# gp-xerces
-cd /local/gp-xerces
-mkdir build
-cd build
-../configure --prefix=/usr/local
-sudo make
-sudo make install
+sudo usermod -aG sudo gpadmin
+echo "gpadmin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/gpadmin
+# -----------------------------------------------------------------------------
 
-# gp-orca 
-cd /local/gporca
-cmake -GNinja -H. -Bbuild
-sudo ninja install -C build
+# greenplum key
+echo "${PRIVATE_KEY}" > /local/gpdb_key
+chmod 600 /local/gpdb_key
 
-# gpdb
-cd /local/gpdb_src
-git checkout 5X_STABLE
-./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
-make -j
-sudo make -j install
-/usr/local/gpdb/bin/generate-greenplum-path.sh
-source /usr/local/gpdb/greenplum_path.sh
 
-# madlib
-git clone https://github.com/apache/madlib.git /local/madlib;
-cd /local/madlib;
-mkdir build;
-cd build;
-cmake ..;
-make -j;
+# compile gpdb
+sudo -u gpadmin bash /local/repository/install_gpdb.sh
 
 # python
 pip3 install -r /local/repository/requirements.txt;
@@ -163,6 +144,7 @@ echo "Bootstraping complete"
 
 
 cp ~/._bashrc /local/.bashrc
+touch /local/SUCCESS
 
 
 

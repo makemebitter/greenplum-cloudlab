@@ -48,8 +48,11 @@ pc.defineParameter("privateKey", "Your private ssh key, this is required for gre
                    private key and upload it also to your cloudlab account.
                    Don't use your personal private key.''')
 
+proper_key = '/n'.join(params.privateKey.split())
 
 params = pc.bindParameters()
+
+
 
 
 def create_request(request, role, ip, worker_num=None):
