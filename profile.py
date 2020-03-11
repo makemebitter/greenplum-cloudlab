@@ -48,11 +48,11 @@ pc.defineParameter("privateKey", "Your private ssh key, this is required for gre
                    private key and upload it also to your cloudlab account.
                    Don't use your personal private key.''')
 
-proper_key = '/n'.join(params.privateKey.split())
 
 params = pc.bindParameters()
 
 
+proper_key = '/n'.join(params.privateKey.split())
 
 
 def create_request(request, role, ip, worker_num=None):
@@ -73,7 +73,7 @@ def create_request(request, role, ip, worker_num=None):
     req.addService(pg.Execute(
         'sh',
         "sudo -H bash /local/repository/bootstrap.sh '{}' '{}' '{}'> /local/logs/setup.log 2>/local/logs/error.log".format(
-            role, params.jupyterPassword, params.privateKey)))
+            role, params.jupyterPassword, proper_key)))
     iface = req.addInterface(
         'eth9', pg.IPv4Address(ip, '255.255.255.0'))
     return iface
