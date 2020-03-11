@@ -1,6 +1,7 @@
 #!/bin/bash
 duty=${1}
 JUPYTER_PASSWORD=${2:-"root"}
+PRIVATE_KEY=${3}
 set -e
 sudo apt-get update;
 sudo apt-get install -y openssh-server openssh-client syslinux-utils python3-pip socat;
@@ -20,76 +21,87 @@ sudo apt-get update
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 
 
-# ----------- build from src, doesn't work ------------------------------------
-# # greenplum
-# git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
-# git clone https://github.com/greenplum-db/gporca.git /local/gporca
-# git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
-# export DEBIAN_FRONTEND=noninteractive
-# sudo bash /local/gpdb_src/README.ubuntu.bash
-# echo /usr/local/lib | sudo tee -a  /etc/ld.so.conf
-# sudo ldconfig
-# cd /local
-# sudo bash gpdb_src/concourse/scripts/setup_gpadmin_user.bash
-# sudo bash -c 'cat >> /etc/sysctl.conf <<-EOF
-# kernel.shmmax = 500000000
-# kernel.shmmni = 4096
-# kernel.shmall = 4000000000
-# kernel.sem = 500 1024000 200 4096
-# kernel.sysrq = 1
-# kernel.core_uses_pid = 1
-# kernel.msgmnb = 65536
-# kernel.msgmax = 65536
-# kernel.msgmni = 2048
-# net.ipv4.tcp_syncookies = 1
-# net.ipv4.ip_forward = 0
-# net.ipv4.conf.default.accept_source_route = 0
-# net.ipv4.tcp_tw_recycle = 1
-# net.ipv4.tcp_max_syn_backlog = 4096
-# net.ipv4.conf.all.arp_filter = 1
-# net.ipv4.ip_local_port_range = 1025 65535
-# net.core.netdev_max_backlog = 10000
-# net.core.rmem_max = 2097152
-# net.core.wmem_max = 2097152
-# vm.overcommit_memory = 2
+# ------------------------- build from src ------------------------------------
+# greenplum key
 
-# EOF'
+# greenplum
+git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
+git clone https://github.com/greenplum-db/gporca.git /local/gporca
+git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
+export DEBIAN_FRONTEND=noninteractive
+sudo bash /local/gpdb_src/README.ubuntu.bash
+echo /usr/local/lib | sudo tee -a  /etc/ld.so.conf
+sudo ldconfig
+cd /local
+sudo bash gpdb_src/concourse/scripts/setup_gpadmin_user.bash
+sudo bash -c 'cat >> /etc/sysctl.conf <<-EOF
+kernel.shmmax = 500000000
+kernel.shmmni = 4096
+kernel.shmall = 4000000000
+kernel.sem = 500 1024000 200 4096
+kernel.sysrq = 1
+kernel.core_uses_pid = 1
+kernel.msgmnb = 65536
+kernel.msgmax = 65536
+kernel.msgmni = 2048
+net.ipv4.tcp_syncookies = 1
+net.ipv4.ip_forward = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_max_syn_backlog = 4096
+net.ipv4.conf.all.arp_filter = 1
+net.ipv4.ip_local_port_range = 1025 65535
+net.core.netdev_max_backlog = 10000
+net.core.rmem_max = 2097152
+net.core.wmem_max = 2097152
+vm.overcommit_memory = 2
+EOF'
 
-# sudo bash -c 'cat >> /etc/security/limits.conf <<-EOF
-# * soft nofile 65536
-# * hard nofile 65536
-# * soft nproc 131072
-# * hard nproc 131072
+sudo bash -c 'cat >> /etc/security/limits.conf <<-EOF
+* soft nofile 65536
+* hard nofile 65536
+* soft nproc 131072
+* hard nproc 131072
 
-# EOF'
+EOF'
 
-# sudo bash -c 'cat >> /etc/ld.so.conf <<-EOF
-# /usr/local/libs
+sudo bash -c 'cat >> /etc/ld.so.conf <<-EOF
+/usr/local/libs
 
-# EOF'
+EOF'
 
-# gp-xerces DON'T USE
-# cd /local/gp-xerces
-# mkdir build
-# cd build
-# ../configure --prefix=/usr/local
-# sudo make
-# sudo make install
+# gp-xerces
+cd /local/gp-xerces
+mkdir build
+cd build
+../configure --prefix=/usr/local
+sudo make
+sudo make install
 
-#gp-orca 
-# cd /local/gporca
-# cmake -GNinja -H. -Bbuild
-# sudo ninja install -C build
+# gp-orca 
+cd /local/gporca
+cmake -GNinja -H. -Bbuild
+sudo ninja install -C build
 
-#gpdb
-# cd /local/gpdb_src
-# git checkout 6X_STABLE
-# ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
-# make -j8
-# sudo make -j8 install
+# gpdb
+cd /local/gpdb_src
+git checkout 5X_STABLE
+./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
+make -j
+sudo make -j install
+/usr/local/gpdb/bin/generate-greenplum-path.sh
+source /usr/local/gpdb/greenplum_path.sh
 
-# # python
-# pip3 install -r /local/repository/requirements.txt;
+# madlib
+git clone https://github.com/apache/madlib.git /local/madlib;
+cd /local/madlib;
+mkdir build;
+cd build;
+cmake ..;
+make -j;
+
+# python
+pip3 install -r /local/repository/requirements.txt;
 # -----------------------------------------------------------------------------
 
 # GPDB ppa ------------––------------------------------------------------------
@@ -97,6 +109,7 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 # sudo apt-get update
 # sudo apt-get install -y greenplum-db
 # sudo bash /opt/greenplum-db-6.0.1/greenplum_path.sh
+# -------––--------------------------------------------------------------------
 
 # Spark ips configs
 # ips=($(ip -4 addr | grep -oP '(?<=inet\s)\d+(\.\d+){3}'))
