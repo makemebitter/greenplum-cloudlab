@@ -43,9 +43,11 @@ pc.defineParameter("publicIPSlaves", "Request public IP addresses for the slaves
                    portal.ParameterType.BOOLEAN, True)
 
 pc.defineParameter("privateKey", "Your private ssh key, this is required for greenplum.",
-                   portal.ParameterType.STRING, longDescription="""Please create a project
-                   private key and upload it also to your cloudlab account. Don't use your personal
-                   private key.""")
+                   portal.ParameterType.STRING, "",
+                   longDescription='''Please create a project
+                   private key and upload it also to your cloudlab account.
+                   Don't use your personal private key.''')
+
 
 params = pc.bindParameters()
 

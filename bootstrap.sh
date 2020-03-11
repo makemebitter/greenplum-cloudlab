@@ -23,7 +23,8 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 
 # ------------------------- build from src ------------------------------------
 # greenplum key
-
+echo $PRIVATE_KEY > /local/gpdb_key
+chmod 600 /local/gpdb_keys
 # greenplum
 git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
 git clone https://github.com/greenplum-db/gporca.git /local/gporca
