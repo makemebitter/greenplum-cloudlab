@@ -31,6 +31,7 @@ git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
 git clone https://github.com/greenplum-db/gporca.git /local/gporca
 git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
 git clone https://github.com/apache/madlib.git /local/madlib
+chmod 777 /local/gpdb_src /local/gporca /local/gp-xerces /local/madlib
 export DEBIAN_FRONTEND=noninteractive
 cd /local
 sudo bash /local/gpdb_src/README.ubuntu.bash
@@ -82,8 +83,10 @@ echo "${PRIVATE_KEY}" > /local/gpdb_key
 chmod 600 /local/gpdb_key
 
 
+chmod 777 /local/logs
+chmod 666 -R /local/logs/*
 # compile gpdb
-sudo -u gpadmin bash /local/repository/install_gpdb.sh >> /local/logs/setup.log 2>>/local/logs/error.log
+sudo -u gpadmin bash /local/repository/install_gpdb.sh &>> /local/logs/setup.log
 
 # python
 pip3 install -r /local/repository/requirements.txt;
