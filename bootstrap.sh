@@ -83,7 +83,7 @@ chmod 600 /local/gpdb_key
 
 
 # compile gpdb
-sudo -u gpadmin bash /local/repository/install_gpdb.sh
+sudo -u gpadmin bash /local/repository/install_gpdb.sh >> /local/logs/setup.log 2>>/local/logs/error.log
 
 # python
 pip3 install -r /local/repository/requirements.txt;
