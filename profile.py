@@ -42,7 +42,7 @@ pc.defineParameter("jupyterPassword", "The password of jupyter notebook, default
 pc.defineParameter("publicIPSlaves", "Request public IP addresses for the slaves or not",
                    portal.ParameterType.BOOLEAN, True)
 
-pc.defineParameter("privateKey", "Your private ssh key, this is required for greenplum.",
+pc.defineParameter("privateKey", "Your private ssh key, this is required for greenplum. Don't copy the comment lines.",
                    portal.ParameterType.STRING, "",
                    longDescription='''Please create a project
                    private key and upload it also to your cloudlab account.
@@ -52,7 +52,7 @@ pc.defineParameter("privateKey", "Your private ssh key, this is required for gre
 params = pc.bindParameters()
 
 
-proper_key = '/n'.join(params.privateKey.split())
+proper_key = '\n'.join(params.privateKey.split())
 
 
 def create_request(request, role, ip, worker_num=None):
