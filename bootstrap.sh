@@ -32,7 +32,7 @@ git clone https://github.com/greenplum-db/gporca.git /local/gporca
 git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
 git clone https://github.com/apache/madlib.git /local/madlib
 export DEBIAN_FRONTEND=noninteractive
-
+cd /local
 sudo bash /local/gpdb_src/README.ubuntu.bash
 echo /usr/local/lib | sudo tee -a  /etc/ld.so.conf
 sudo ldconfig
