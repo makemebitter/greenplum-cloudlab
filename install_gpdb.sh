@@ -9,7 +9,7 @@ mkdir build
 cd build
 ../configure --prefix=/usr/local
 make
-make install
+sudo make install
 
 # gp-orca 
 cd /local/gporca
