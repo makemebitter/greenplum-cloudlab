@@ -83,14 +83,23 @@ echo "${PRIVATE_KEY}" > /local/gpdb_key
 chown gpadmin /local/gpdb_key
 chmod 600 /local/gpdb_key
 cat ~/.ssh/authorized_keys >> /home/gpadmin/.ssh/authorized_keys
+ssh-keygen -y -f /local/gpdb_key >> /home/gpadmin/.ssh/authorized_keys
 
 chmod 777 /local/logs
 chmod 666 -R /local/logs/*
-# compile gpdb
-sudo -u gpadmin bash /local/repository/install_gpdb.sh &>> /local/logs/setup.log
+
+mkdir /gpdata
+chown gpadmin /gpdata
+mkdir /gpdata_master
+chown gpadmin /gpdata_master
+
+# compile, install, and run gpdb, compile and install madlib
+sudo -u gpadmin bash /local/repository/install_gpdb.sh ${duty} &>> /local/logs/setup.log
 
 # python
 pip3 install -r /local/repository/requirements.txt;
+
+
 # -----------------------------------------------------------------------------
 
 # GPDB ppa ------------––------------------------------------------------------
@@ -115,6 +124,8 @@ pip3 install -r /local/repository/requirements.txt;
 # echo "export SPARK_MASTER_HOST=$master_ip" | sudo tee -a /usr/local/spark/conf/spark-env.sh;
 # echo "export SPARK_LOCAL_IP=$LOCAL_IP" | sudo tee -a /usr/local/spark/conf/spark-env.sh;
 # echo "export PYSPARK_PYTHON=python3.6" | sudo tee -a /usr/local/spark/conf/spark-env.sh;
+
+awk 'NR>1 {print $NF}' /etc/hosts > /local/gphost_list
 
 
 # Jupyter extension configs
@@ -142,8 +153,7 @@ if [ "$duty" = "m" ]; then
 
 
 # elif [ "$duty" = "s" ]; then
-# 	sudo bash /usr/local/spark/sbin/start-slave.sh $master_ip:7077
-# 	sudo nohup socat TCP-LISTEN:8082,fork TCP:${LOCAL_IP}:8081 > /dev/null 2>&1 &	
+# 	gpssh-exkeys -f hostlist_singlenode
 # fi
 echo "Bootstraping complete"
 
