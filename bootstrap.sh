@@ -80,8 +80,9 @@ echo "gpadmin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/gpadmin
 
 # greenplum key
 echo "${PRIVATE_KEY}" > /local/gpdb_key
+chown gpadmin /local/gpdb_key
 chmod 600 /local/gpdb_key
-
+cat ~/.ssh/authorized_keys >> /home/gpadmin/.ssh/authorized_keys
 
 chmod 777 /local/logs
 chmod 666 -R /local/logs/*
