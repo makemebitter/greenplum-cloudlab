@@ -14,7 +14,7 @@ sudo make install
 # gp-orca 
 cd /local/gporca
 cmake -GNinja -H. -Bbuild
-ninja install -C build
+sudo ninja install -C build
 
 # gpdb
 cd /local/gpdb_src
