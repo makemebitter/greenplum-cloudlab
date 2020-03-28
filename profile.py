@@ -42,7 +42,7 @@ pc.defineParameter("jupyterPassword", "The password of jupyter notebook, default
 pc.defineParameter("publicIPSlaves", "Request public IP addresses for the slaves or not",
                    portal.ParameterType.BOOLEAN, True)
 
-pc.defineParameter("privateKey", "Your private ssh key, this is required for greenplum. Don't copy the comment lines.",
+pc.defineParameter("privateKey", "Your private ssh key, this is required for greenplum.",
                    portal.ParameterType.STRING, "",
                    longDescription='''Please create a project
                    private key and upload it also to your cloudlab account.
@@ -53,6 +53,8 @@ params = pc.bindParameters()
 
 
 proper_key = '\n'.join(params.privateKey.split())
+proper_key = '-----BEGIN RSA PRIVATE KEY-----\n' + \
+    proper_key + '-----END RSA PRIVATE KEY-----\n'
 
 
 def create_request(request, role, ip, worker_num=None):
@@ -72,7 +74,7 @@ def create_request(request, role, ip, worker_num=None):
     req.disk_image = DISK_IMG
     req.addService(pg.Execute(
         'sh',
-        "sudo -H bash /local/repository/bootstrap.sh '{}' '{}' '{}' &> /local/logs/setup.log".format(
+        "sudo -H bash /local/repository/bootstrap.sh '{}' '{}' '{}' &>> /local/logs/setup.log".format(
             role, params.jupyterPassword, proper_key)))
     iface = req.addInterface(
         'eth9', pg.IPv4Address(ip, '255.255.255.0'))

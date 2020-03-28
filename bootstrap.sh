@@ -88,10 +88,10 @@ ssh-keygen -y -f /local/gpdb_key >> /home/gpadmin/.ssh/authorized_keys
 chmod 777 /local/logs
 chmod 666 -R /local/logs/*
 
-mkdir /gpdata
-chown gpadmin /gpdata
-mkdir /gpdata_master
-chown gpadmin /gpdata_master
+sudo mkdir /gpdata
+sudo chown gpadmin /gpdata
+sudo mkdir /gpdata_master
+sudo chown gpadmin /gpdata_master
 
 # compile, install, and run gpdb, compile and install madlib
 sudo -u gpadmin bash /local/repository/install_gpdb.sh ${duty} &>> /local/logs/setup.log
@@ -125,7 +125,7 @@ pip3 install -r /local/repository/requirements.txt;
 # echo "export SPARK_LOCAL_IP=$LOCAL_IP" | sudo tee -a /usr/local/spark/conf/spark-env.sh;
 # echo "export PYSPARK_PYTHON=python3.6" | sudo tee -a /usr/local/spark/conf/spark-env.sh;
 
-awk 'NR>1 {print $NF}' /etc/hosts > /local/gphost_list
+
 
 
 # Jupyter extension configs
