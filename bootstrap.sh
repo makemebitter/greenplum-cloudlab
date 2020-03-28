@@ -93,7 +93,6 @@ sudo mkdir /gpdata
 sudo chown gpadmin /gpdata
 sudo mkdir /gpdata_master
 sudo chown gpadmin /gpdata_master
-
 # compile, install, and run gpdb, compile and install madlib
 sudo -u gpadmin bash /local/repository/install_gpdb.sh ${duty} &>> /local/logs/setup.log
 

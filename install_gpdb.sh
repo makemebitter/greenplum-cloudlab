@@ -11,13 +11,13 @@ export DEBIAN_FRONTEND=noninteractive
 cd /local/gp-xerces
 mkdir build
 cd build
-../configure --prefix=/usr/local
+../configure --prefix=/usr/local/gpdb
 make
 sudo make install
 
 # gp-orca 
 cd /local/gporca
-cmake -GNinja -H. -Bbuild
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gpdb -GNinja -H. -Bbuild 
 sudo ninja install -C build
 
 # gpdb
@@ -32,6 +32,7 @@ sudo make -j install
 if [ "$duty" = "m" ]; then
 	/usr/local/gpdb/bin/generate-greenplum-path.sh
 	source /usr/local/gpdb/greenplum_path.sh
+	echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
 	pip install paramiko;
 	gpssh-exkeys -f /local/gphost_list
 	gpinitsystem -c /local/repository/gpinitsystem_config -h /local/gphost_list
