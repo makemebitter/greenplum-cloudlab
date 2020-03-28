@@ -3,7 +3,7 @@ duty=${1}
 set -e
 eval `ssh-agent`
 ssh-add /local/gpdb_key
-awk 'NR>1 {print $NF}' /etc/hosts > /local/gphost_list
+awk 'NR>1 {print $NF}' /etc/hosts | grep -v 'master' > /local/gphost_list
 # greenplum
 export DEBIAN_FRONTEND=noninteractive
 
@@ -17,7 +17,7 @@ sudo make install
 
 # gp-orca 
 cd /local/gporca
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gpdb -GNinja -H. -Bbuild 
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local -GNinja -H. -Bbuild 
 sudo ninja install -C build
 
 sudo ldconfig
@@ -36,7 +36,8 @@ if [ "$duty" = "m" ]; then
 	echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
 	pip install paramiko;
 	gpssh-exkeys -f /local/gphost_list
-	gpinitsystem -c /local/repository/gpinitsystem_config -h /local/gphost_list
+	cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
+	gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
 	# madlib
 	cd /local/madlib;
 	mkdir build;
