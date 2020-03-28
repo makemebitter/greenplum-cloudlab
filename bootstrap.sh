@@ -94,7 +94,7 @@ sudo chown gpadmin /gpdata
 sudo mkdir /gpdata_master
 sudo chown gpadmin /gpdata_master
 # compile, install, and run gpdb, compile and install madlib
-sudo -u -H gpadmin bash /local/repository/install_gpdb.sh ${duty} &>> /local/logs/setup.log
+sudo -H -u  gpadmin bash /local/repository/install_gpdb.sh ${duty} &>> /local/logs/setup.log
 
 # python
 pip3 install -r /local/repository/requirements.txt;
