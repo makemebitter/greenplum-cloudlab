@@ -150,7 +150,7 @@ echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.p
 if [ "$duty" = "m" ]; then
 	sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /dev/null 2>&1 &
 	sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /dev/null 2>&1 &
-
+fi
 
 # elif [ "$duty" = "s" ]; then
 # 	gpssh-exkeys -f hostlist_singlenode

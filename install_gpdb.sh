@@ -41,4 +41,4 @@ if [ "$duty" = "m" ]; then
 	cd build;
 	cmake ..;
 	make -j;
-
+fi
