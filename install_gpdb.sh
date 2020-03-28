@@ -20,6 +20,7 @@ cd /local/gporca
 cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gpdb -GNinja -H. -Bbuild 
 sudo ninja install -C build
 
+sudo ldconfig
 # gpdb
 
 cd /local/gpdb_src
