@@ -54,7 +54,7 @@ params = pc.bindParameters()
 
 proper_key = '\n'.join(params.privateKey.split())
 proper_key = '-----BEGIN RSA PRIVATE KEY-----\n' + \
-    proper_key + '-----END RSA PRIVATE KEY-----\n'
+    proper_key + '\n-----END RSA PRIVATE KEY-----\n'
 
 
 def create_request(request, role, ip, worker_num=None):
@@ -73,8 +73,8 @@ def create_request(request, role, ip, worker_num=None):
             req.hardware_type = params.osNodeTypeSlave
     req.disk_image = DISK_IMG
     req.addService(pg.Execute(
-        'sh',
-        "sudo -H bash /local/repository/bootstrap.sh '{}' '{}' '{}' &>> /local/logs/setup.log".format(
+        'bash',
+        "sudo bash /local/repository/bootstrap.sh '{}' '{}' '{}' 2>&1 | sudo tee /local/logs/setup.log".format(
             role, params.jupyterPassword, proper_key)))
     iface = req.addInterface(
         'eth9', pg.IPv4Address(ip, '255.255.255.0'))
