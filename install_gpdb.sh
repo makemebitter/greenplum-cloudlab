@@ -3,7 +3,7 @@ duty=${1}
 set -e
 eval `ssh-agent`
 ssh-add /local/gpdb_key
-
+awk 'NR>1 {print $NF}' /etc/hosts > /local/gphost_list
 # greenplum
 export DEBIAN_FRONTEND=noninteractive
 
