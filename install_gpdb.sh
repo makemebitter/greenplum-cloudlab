@@ -30,18 +30,18 @@ make -j
 sudo make -j install
 
 
-if [ "$duty" = "m" ]; then
-	/usr/local/gpdb/bin/generate-greenplum-path.sh
-	source /usr/local/gpdb/greenplum_path.sh
-	echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
-	pip install paramiko;
-	gpssh-exkeys -f /local/gphost_list
-	cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
-	gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
-	# madlib
-	cd /local/madlib;
-	mkdir build;
-	cd build;
-	cmake ..;
-	make -j;
-fi
+# if [ "$duty" = "m" ]; then
+# 	/usr/local/gpdb/bin/generate-greenplum-path.sh
+# 	source /usr/local/gpdb/greenplum_path.sh
+# 	echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
+# 	pip install paramiko;
+# 	gpssh-exkeys -f /local/gphost_list
+# 	cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
+# 	gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
+# 	# madlib
+# 	cd /local/madlib;
+# 	mkdir build;
+# 	cd build;
+# 	cmake ..;
+# 	make -j;
+# fi
