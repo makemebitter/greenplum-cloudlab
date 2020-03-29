@@ -102,12 +102,7 @@ pip3 install -r /local/repository/requirements.txt;
 
 # -----------------------------------------------------------------------------
 
-# GPDB ppa ------------––------------------------------------------------------
-# sudo add-apt-repository -y ppa:greenplum/db
-# sudo apt-get update
-# sudo apt-get install -y greenplum-db
-# sudo bash /opt/greenplum-db-6.0.1/greenplum_path.sh
-# -------––--------------------------------------------------------------------
+
 
 # Spark ips configs
 # ips=($(ip -4 addr | grep -oP '(?<=inet\s)\d+(\.\d+){3}'))

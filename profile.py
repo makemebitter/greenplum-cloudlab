@@ -61,7 +61,7 @@ def create_request(request, role, ip, worker_num=None):
     if role == 'm':
         name = 'master'
     elif role == 's':
-        name = 'worker-{}'.format(worker_num)
+        name = 'worker{}'.format(worker_num)
     req = request.RawPC(name)
     if role == 'm':
         req.routable_control_ip = True
