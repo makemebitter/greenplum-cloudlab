@@ -45,7 +45,7 @@ pip install paramiko;
 # -------––--------------------------------------------------------------------
 
 
-
+echo "GPDB INSTALLATION FINISHED"
 if [ "$duty" = "m" ]; then
 	/usr/local/gpdb/bin/generate-greenplum-path.sh
 	echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
@@ -53,6 +53,7 @@ if [ "$duty" = "m" ]; then
 	gpssh-exkeys -f /local/gphost_list
 	cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
 	gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
+	echo "GPDB INITIALIZATION FINISHED"
 	# madlib
 	cd /local/madlib;
 	mkdir build;
@@ -60,3 +61,4 @@ if [ "$duty" = "m" ]; then
 	cmake ..;
 	make -j;
 fi
+echo "GPDB SCRIPT EXISTING"

@@ -74,7 +74,7 @@ def create_request(request, role, ip, worker_num=None):
     req.disk_image = DISK_IMG
     req.addService(pg.Execute(
         'bash',
-        "sudo bash /local/repository/bootstrap.sh '{}' '{}' '{}' 2>&1 | sudo tee /local/logs/setup.log".format(
+        "sudo bash /local/repository/bootstrap.sh '{}' '{}' '{}' 2>&1 | sudo tee -a /local/logs/setup.log".format(
             role, params.jupyterPassword, proper_key)))
     iface = req.addInterface(
         'eth3', pg.IPv4Address(ip, '255.255.255.0'))

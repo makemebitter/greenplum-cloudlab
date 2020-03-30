@@ -6,7 +6,7 @@ echo "PRIVATE KEY"
 echo "${PRIVATE_KEY}"
 set -e
 sudo apt-get update;
-sudo apt-get install -y openssh-server openssh-client syslinux-utils python3-pip socat;
+sudo apt-get install -y openssh-server openssh-client syslinux-utils python3-pip socat libffi-dev;
 # docker
 sudo apt-get install -y \
     apt-transport-https \
@@ -96,7 +96,7 @@ if [ "$duty" = "m" ]; then
   sudo chown gpadmin /gpdata_master
 fi
 # compile, install, and run gpdb, compile and install madlib
-sudo -H -u  gpadmin bash /local/repository/install_gpdb.sh ${duty} &>> /local/logs/setup.log
+sudo -H -u  gpadmin bash /local/repository/install_gpdb.sh ${duty}
 
 # python
 pip3 install -r /local/repository/requirements.txt;
@@ -122,29 +122,22 @@ pip3 install -r /local/repository/requirements.txt;
 # echo "export SPARK_LOCAL_IP=$LOCAL_IP" | sudo tee -a /usr/local/spark/conf/spark-env.sh;
 # echo "export PYSPARK_PYTHON=python3.6" | sudo tee -a /usr/local/spark/conf/spark-env.sh;
 
-
-
-
-# Jupyter extension configs
-sudo /usr/local/bin/jupyter contrib nbextension install --system ;
-sudo /usr/local/bin/jupyter nbextensions_configurator enable --system ;
-sudo /usr/local/bin/jupyter nbextension enable code_prettify/code_prettify --system ;
-sudo /usr/local/bin/jupyter nbextension enable execute_time/ExecuteTime --system ;
-sudo /usr/local/bin/jupyter nbextension enable collapsible_headings/main --system ;
-sudo /usr/local/bin/jupyter nbextension enable freeze/main --system ;
-sudo /usr/local/bin/jupyter nbextension enable spellchecker/main --system ;
-
-# Jupyter password
-mkdir -p ~/.jupyter;
-HASHED_PASSWORD=$(python3.6 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
-echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
-echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
-
-
-
-
 # Running Jupyter deamons
 if [ "$duty" = "m" ]; then
+  # Jupyter extension configs
+  sudo /usr/local/bin/jupyter contrib nbextension install --system ;
+  sudo /usr/local/bin/jupyter nbextensions_configurator enable --system ;
+  sudo /usr/local/bin/jupyter nbextension enable code_prettify/code_prettify --system ;
+  sudo /usr/local/bin/jupyter nbextension enable execute_time/ExecuteTime --system ;
+  sudo /usr/local/bin/jupyter nbextension enable collapsible_headings/main --system ;
+  sudo /usr/local/bin/jupyter nbextension enable freeze/main --system ;
+  sudo /usr/local/bin/jupyter nbextension enable spellchecker/main --system ;
+
+  # Jupyter password
+  mkdir -p ~/.jupyter;
+  HASHED_PASSWORD=$(python3.6 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
+  echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
+  echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
 	sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /dev/null 2>&1 &
 	sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /dev/null 2>&1 &
 fi
