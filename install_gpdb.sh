@@ -4,40 +4,41 @@ set -e
 eval `ssh-agent`
 ssh-add /local/gpdb_key
 awk 'NR>1 {print $NF}' /etc/hosts | grep -v 'master' > /local/gphost_list
+echo "RemoveIPC=no" | sudo tee -a /etc/systemd/logind.conf
+sudo service systemd-logind restart
 
+# greenplum
+export DEBIAN_FRONTEND=noninteractive
 
-# # greenplum
-# export DEBIAN_FRONTEND=noninteractive
+# gp-xerces
+cd /local/gp-xerces
+mkdir build
+cd build
+../configure --prefix=/usr/local/gpdb
+make
+sudo make install
 
-# # gp-xerces
-# cd /local/gp-xerces
-# mkdir build
-# cd build
-# ../configure --prefix=/usr/local/gpdb
-# make
-# sudo make install
+# gp-orca 
+cd /local/gporca
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local -GNinja -H. -Bbuild 
+sudo ninja install -C build
 
-# # gp-orca 
-# cd /local/gporca
-# cmake -DCMAKE_INSTALL_PREFIX=/usr/local -GNinja -H. -Bbuild 
-# sudo ninja install -C build
+sudo ldconfig
+# gpdb
 
-# sudo ldconfig
-# # gpdb
-
-# cd /local/gpdb_src
-# git checkout 5X_STABLE
-# ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
-# make -j
+cd /local/gpdb_src
+git checkout 5X_STABLE
+./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
+make -j
 sudo make -j install
 
 
 # GPDB ppa ------------––------------------------------------------------------
-sudo add-apt-repository -y ppa:greenplum/db
-sudo apt-get update
-sudo apt-get install -y greenplum-db-oss
-sudo chown -R gpadmin:gpadmin /opt/gpdb
-source /opt/gpdb/greenplum_path.sh
+# sudo add-apt-repository -y ppa:greenplum/db
+# sudo apt-get update
+# sudo apt-get install -y greenplum-db-oss
+# sudo chown -R gpadmin:gpadmin /opt/gpdb
+# source /opt/gpdb/greenplum_path.sh
 # -------––--------------------------------------------------------------------
 
 
