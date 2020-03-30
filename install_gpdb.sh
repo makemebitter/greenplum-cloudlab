@@ -51,8 +51,8 @@ if [ "$duty" = "m" ]; then
 	echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
 	source ~/.bashrc
 	gpssh-exkeys -f /local/gphost_list
-	cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
-	gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
+	# cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
+	# gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
 	echo "GPDB INITIALIZATION FINISHED"
 	# madlib
 	cd /local/madlib;
