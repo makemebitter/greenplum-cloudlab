@@ -71,7 +71,7 @@ ENCODING=UNICODE
 ################################################
 
 #### Create a database of this name after initialization.
-#DATABASE_NAME=name_of_database
+DATABASE_NAME=cerebro
 
 #### Specify the location of the host address file here instead of
 #### with the the -h option of gpinitsystem.

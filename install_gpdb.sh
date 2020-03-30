@@ -57,9 +57,8 @@ pip install paramiko;
 
 echo "GPDB INSTALLATION FINISHED"
 if [ "$duty" = "m" ]; then
-
     /usr/local/gpdb/bin/generate-greenplum-path.sh
-    echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
+    echo 'source /usr/local/gpdb/greenplum_path.sh' >> ~/.bashrc
     source ~/.bashrc
     FILE_PATH=/local/gphost_list
     TAG_PATH=/local/SUCCESS
@@ -69,7 +68,7 @@ if [ "$duty" = "m" ]; then
         echo "Checking if all hosts finished"
         all_done=true
         for host in "${hosts[@]}"; do
-            if ssh $host stat $TAG_PATH \> /dev/null 2\>\&1; then
+            if ssh -o StrictHostKeychecking=no $host stat $TAG_PATH \> /dev/null 2\>\&1; then
                 echo "$host finished"
             else
                 echo "$host hasn't finished yet"
@@ -80,17 +79,23 @@ if [ "$duty" = "m" ]; then
 
         if [ "$all_done" = true ] ; then
             echo "GPDB INITIALIZATION STARTING"
+            
+            sudo hostnamectl set-hostname master
             gpssh-exkeys -f /local/gphost_list
+            gpssh-exkeys -h master
             cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
+            echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard nofile 65536' |sudo tee -a /etc/security/limits.d/gpadmin-limits.conf
+            set +e
             gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
+            echo $?
+            set -e
+            echo 'export MASTER_DATA_DIRECTORY=/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
             break
         else
             echo "WAITING"
             sleep 5s
         fi
     done
-    
-    
     echo "GPDB INITIALIZATION FINISHED"    
 fi
 echo "GPDB SCRIPT EXISTING"

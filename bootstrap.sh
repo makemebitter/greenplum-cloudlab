@@ -103,9 +103,7 @@ fi
 # compile, install, and run gpdb, compile and install madlib
 sudo -H -u  gpadmin bash /local/repository/install_gpdb.sh ${duty}
 
-# python
-pip3 install --upgrade six
-pip3 install -r /local/repository/requirements.txt;
+
 
 
 # -----------------------------------------------------------------------------
@@ -130,6 +128,9 @@ pip3 install -r /local/repository/requirements.txt;
 
 # Running Jupyter deamons
 if [ "$duty" = "m" ]; then
+  # python
+  pip3 install --upgrade six
+  pip3 install -r /local/repository/requirements_master.txt;
   # Jupyter extension configs
   sudo /usr/local/bin/jupyter contrib nbextension install --system ;
   sudo /usr/local/bin/jupyter nbextensions_configurator enable --system ;
