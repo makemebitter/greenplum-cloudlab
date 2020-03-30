@@ -21,6 +21,11 @@ sudo add-apt-repository \
    stable"
 sudo apt-get update
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+# python 3.6
+# sudo add-apt-repository ppa:deadsnakes/ppa
+# sudo apt-get update
+# sudo apt-get install python3.6 python3.6-venv
+# curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
 
 
 # ------------------------- build from src ------------------------------------
@@ -99,6 +104,7 @@ fi
 sudo -H -u  gpadmin bash /local/repository/install_gpdb.sh ${duty}
 
 # python
+pip3 install --upgrade six
 pip3 install -r /local/repository/requirements.txt;
 
 
@@ -135,7 +141,7 @@ if [ "$duty" = "m" ]; then
 
   # Jupyter password
   mkdir -p ~/.jupyter;
-  HASHED_PASSWORD=$(python3.6 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
+  HASHED_PASSWORD=$(python3 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
   echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
   echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
 	sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /dev/null 2>&1 &

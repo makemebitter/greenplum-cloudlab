@@ -24,14 +24,23 @@ cd /local/gporca
 cmake -DCMAKE_INSTALL_PREFIX=/usr/local -GNinja -H. -Bbuild 
 sudo ninja install -C build
 
+# refresh dynamic libs
 sudo ldconfig
-# gpdb
 
+# gpdb
 cd /local/gpdb_src
 git checkout 5X_STABLE
 ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
 make -j
 sudo make -j install
+
+# madlib
+cd /local/madlib;
+mkdir build;
+cd build;
+cmake ..;
+make -j;
+
 
 # Important missing dependency
 pip install paramiko;
@@ -55,10 +64,6 @@ if [ "$duty" = "m" ]; then
 	# gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
 	echo "GPDB INITIALIZATION FINISHED"
 	# madlib
-	cd /local/madlib;
-	mkdir build;
-	cd build;
-	cmake ..;
-	make -j;
+	
 fi
 echo "GPDB SCRIPT EXISTING"
