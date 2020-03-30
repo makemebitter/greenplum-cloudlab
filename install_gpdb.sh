@@ -1,8 +1,9 @@
 #!/bin/bash
 duty=${1}
 set -e
-eval `ssh-agent`
-ssh-add /local/gpdb_key
+echo 'eval `ssh-agent` &> /dev/null' >> ~/.bashrc
+echo "ssh-add /local/gpdb_key &> /dev/null" >> ~/.bashrc
+source ~/.bashrc
 awk 'NR>1 {print $NF}' /etc/hosts | grep -v 'master' > /local/gphost_list
 echo "RemoveIPC=no" | sudo tee -a /etc/systemd/logind.conf
 sudo service systemd-logind restart
@@ -32,6 +33,8 @@ git checkout 5X_STABLE
 make -j
 sudo make -j install
 
+# Important missing dependency
+pip install paramiko;
 
 # GPDB ppa ------------––------------------------------------------------------
 # sudo add-apt-repository -y ppa:greenplum/db
@@ -43,18 +46,17 @@ sudo make -j install
 
 
 
-# if [ "$duty" = "m" ]; then
-# 	/usr/local/gpdb/bin/generate-greenplum-path.sh
-# 	source /usr/local/gpdb/greenplum_path.sh
-# 	echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
-# 	pip install paramiko;
-# 	gpssh-exkeys -f /local/gphost_list
-# 	cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
-# 	gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
-# 	# madlib
-# 	cd /local/madlib;
-# 	mkdir build;
-# 	cd build;
-# 	cmake ..;
-# 	make -j;
-# fi
+if [ "$duty" = "m" ]; then
+	/usr/local/gpdb/bin/generate-greenplum-path.sh
+	echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
+	source ~/.bashrc
+	gpssh-exkeys -f /local/gphost_list
+	cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
+	gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
+	# madlib
+	cd /local/madlib;
+	mkdir build;
+	cd build;
+	cmake ..;
+	make -j;
+fi

@@ -91,8 +91,10 @@ chmod 666 -R /local/logs/*
 
 sudo mkdir /gpdata
 sudo chown gpadmin /gpdata
-sudo mkdir /gpdata_master
-sudo chown gpadmin /gpdata_master
+if [ "$duty" = "m" ]; then
+  sudo mkdir /gpdata_master
+  sudo chown gpadmin /gpdata_master
+fi
 # compile, install, and run gpdb, compile and install madlib
 sudo -H -u  gpadmin bash /local/repository/install_gpdb.sh ${duty} &>> /local/logs/setup.log
 
