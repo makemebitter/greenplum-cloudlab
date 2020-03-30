@@ -54,16 +54,43 @@ pip install paramiko;
 # -------––--------------------------------------------------------------------
 
 
+
 echo "GPDB INSTALLATION FINISHED"
 if [ "$duty" = "m" ]; then
-	/usr/local/gpdb/bin/generate-greenplum-path.sh
-	echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
-	source ~/.bashrc
-	gpssh-exkeys -f /local/gphost_list
-	# cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
-	# gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
-	echo "GPDB INITIALIZATION FINISHED"
-	# madlib
-	
+
+    /usr/local/gpdb/bin/generate-greenplum-path.sh
+    echo "source /usr/local/gpdb/greenplum_path.sh" >> ~/.bashrc
+    source ~/.bashrc
+    FILE_PATH=/local/gphost_list
+    TAG_PATH=/local/SUCCESS
+    readarray -t hosts < $FILE_PATH
+
+    while true; do
+        echo "Checking if all hosts finished"
+        all_done=true
+        for host in "${hosts[@]}"; do
+            if ssh $host stat $TAG_PATH \> /dev/null 2\>\&1; then
+                echo "$host finished"
+            else
+                echo "$host hasn't finished yet"
+                all_done=false
+            fi
+        done
+        
+
+        if [ "$all_done" = true ] ; then
+            echo "GPDB INITIALIZATION STARTING"
+            gpssh-exkeys -f /local/gphost_list
+            cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
+            gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
+            break
+        else
+            echo "WAITING"
+            sleep 5s
+        fi
+    done
+    
+    
+    echo "GPDB INITIALIZATION FINISHED"    
 fi
 echo "GPDB SCRIPT EXISTING"

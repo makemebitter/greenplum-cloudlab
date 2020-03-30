@@ -154,7 +154,7 @@ fi
 echo "Bootstraping complete"
 
 
-cp ~/._bashrc /local/.bashrc
+cp ~/.bashrc /local/.bashrc
 touch /local/SUCCESS
 
 
