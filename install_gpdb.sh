@@ -1,12 +1,14 @@
 #!/bin/bash
 duty=${1}
 set -e
+# system settings
 echo 'eval `ssh-agent` &> /dev/null' >> ~/.bashrc
 echo "ssh-add /local/gpdb_key &> /dev/null" >> ~/.bashrc
 source ~/.bashrc
 awk 'NR>1 {print $NF}' /etc/hosts | grep -v 'master' > /local/gphost_list
 echo "RemoveIPC=no" | sudo tee -a /etc/systemd/logind.conf
 sudo service systemd-logind restart
+echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard nofile 65536' |sudo tee -a /etc/security/limits.d/gpadmin-limits.conf
 
 # greenplum
 export DEBIAN_FRONTEND=noninteractive
@@ -33,6 +35,12 @@ git checkout 5X_STABLE
 ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
 make -j
 sudo make -j install
+/usr/local/gpdb/bin/generate-greenplum-path.sh
+echo 'source /usr/local/gpdb/greenplum_path.sh' >> ~/.bashrc
+source ~/.bashrc
+sudo chown -R gpadmin:gpadmin /usr/local/gpdb
+# important missing dependency
+pip install paramiko;
 
 # madlib
 cd /local/madlib;
@@ -42,11 +50,10 @@ cmake ..;
 make -j;
 
 
-sudo chown -R gpadmin:gpadmin /usr/local/gpdb
-# Important missing dependency
-pip install paramiko;
 
-# GPDB ppa ------------––------------------------------------------------------
+
+
+# GPDB ppa use if above doen't work -––----------------------------------------
 # sudo add-apt-repository -y ppa:greenplum/db
 # sudo apt-get update
 # sudo apt-get install -y greenplum-db-oss
@@ -58,9 +65,6 @@ pip install paramiko;
 
 echo "GPDB INSTALLATION FINISHED"
 if [ "$duty" = "m" ]; then
-    /usr/local/gpdb/bin/generate-greenplum-path.sh
-    echo 'source /usr/local/gpdb/greenplum_path.sh' >> ~/.bashrc
-    source ~/.bashrc
     FILE_PATH=/local/gphost_list
     TAG_PATH=/local/SUCCESS
     readarray -t hosts < $FILE_PATH
@@ -84,12 +88,12 @@ if [ "$duty" = "m" ]; then
             gpssh-exkeys -f /local/gphost_list
             gpssh-exkeys -h master
             cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
-            echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard nofile 65536' |sudo tee -a /etc/security/limits.d/gpadmin-limits.conf
             set +e
             gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
             echo $?
             set -e
             echo 'export MASTER_DATA_DIRECTORY=/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
+            /local/madlib/build/src/bin/madpack -p greenplum -c gpadmin@master:5432/cerebro install
             break
         else
             echo "WAITING"
