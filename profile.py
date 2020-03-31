@@ -77,7 +77,7 @@ def create_request(request, role, ip, worker_num=None):
         "sudo bash /local/repository/bootstrap.sh '{}' '{}' '{}' 2>&1 | sudo tee -a /local/logs/setup.log".format(
             role, params.jupyterPassword, proper_key)))
     iface = req.addInterface(
-        'eth3', pg.IPv4Address(ip, '255.255.255.0'))
+        'eth1', pg.IPv4Address(ip, '255.255.255.0'))
     return iface
 
 
