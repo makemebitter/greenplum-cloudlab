@@ -1,10 +1,13 @@
 #!/bin/bash
+set -e
+
 duty=${1}
 JUPYTER_PASSWORD=${2:-"root"}
 PRIVATE_KEY=${3}
+FILE_PATH=/local/gphost_list
 echo "PRIVATE KEY"
 echo "${PRIVATE_KEY}"
-set -e
+
 sudo apt-get update;
 sudo apt-get install -y openssh-server openssh-client syslinux-utils python3-pip socat libffi-dev;
 sudo apt-get install -y \
@@ -29,7 +32,36 @@ sudo apt-get install -y \
 # curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
 
 
-# ------------------------- build from src ------------------------------------
+# --------------------- Check if every host online ----------------------------
+awk 'NR>1 {print $NF}' /etc/hosts | grep -v 'master' > /local/gphost_list
+if [ "$duty" = "m" ]; then
+    readarray -t hosts < $FILE_PATH
+    while true; do
+        echo "Checking if other hosts online"
+        all_done=true
+        for host in "${hosts[@]}"; do
+            if nc -w 2 -z $host 22 2>/dev/null; then
+                echo "$host ✓"
+            else
+                echo "$host ✗"
+                all_done=false
+            fi
+        done
+        
+
+        if [ "$all_done" = true ] ; then
+            break
+        else
+            echo "WAITING"
+            sleep 5s
+        fi
+    done
+fi
+# -----------------------------------------------------------------------------
+
+
+
+
 
 # greenplum
 # ------------------------- system settings -----------------------------------
@@ -146,12 +178,12 @@ if [ "$duty" = "m" ]; then
   HASHED_PASSWORD=$(python3 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
   echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
   echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
-	sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /dev/null 2>&1 &
-	sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /dev/null 2>&1 &
+    sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /dev/null 2>&1 &
+    sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /dev/null 2>&1 &
 fi
 
 # elif [ "$duty" = "s" ]; then
-# 	gpssh-exkeys -f hostlist_singlenode
+#   gpssh-exkeys -f hostlist_singlenode
 # fi
 echo "Bootstraping complete"
 

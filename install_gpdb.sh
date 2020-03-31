@@ -5,10 +5,12 @@ set -e
 echo 'eval `ssh-agent` &> /dev/null' >> ~/.bashrc
 echo "ssh-add /local/gpdb_key &> /dev/null" >> ~/.bashrc
 source ~/.bashrc
-awk 'NR>1 {print $NF}' /etc/hosts | grep -v 'master' > /local/gphost_list
 echo "RemoveIPC=no" | sudo tee -a /etc/systemd/logind.conf
 sudo service systemd-logind restart
 echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard nofile 65536' |sudo tee -a /etc/security/limits.d/gpadmin-limits.conf
+
+
+
 
 # greenplum
 export DEBIAN_FRONTEND=noninteractive
@@ -68,7 +70,6 @@ if [ "$duty" = "m" ]; then
     FILE_PATH=/local/gphost_list
     TAG_PATH=/local/SUCCESS
     readarray -t hosts < $FILE_PATH
-
     while true; do
         echo "Checking if all hosts finished"
         all_done=true
