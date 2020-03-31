@@ -85,8 +85,10 @@ if [ "$duty" = "m" ]; then
             gpssh-exkeys -h master
             cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
             echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard nofile 65536' |sudo tee -a /etc/security/limits.d/gpadmin-limits.conf
+            set +e
             gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
             echo $?
+            set -e
             echo 'export MASTER_DATA_DIRECTORY=/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
             break
         else
