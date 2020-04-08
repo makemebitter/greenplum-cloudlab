@@ -133,9 +133,7 @@ chmod 600 /local/gpdb_key
 # echo >> /home/gpadmin/.ssh/authorized_keys
 ssh-keygen -y -f /local/gpdb_key >> /home/gpadmin/.ssh/authorized_keys
 
-chmod 777 /local/logs
-chmod 666 -R /local/logs/*
-
+chmod -R 777 /local
 sudo mkdir /gpdata
 sudo chown gpadmin /gpdata
 if [ "$duty" = "m" ]; then
