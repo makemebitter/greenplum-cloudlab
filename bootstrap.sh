@@ -61,7 +61,7 @@ fi
 # -----------------------------------------------------------------------------
 # Get the extra filesystem otherwise no enough disk space
 sudo /usr/local/etc/emulab/mkextrafs.pl /mnt
-sudo mkdir /mnt/local
+# sudo mkdir /mnt/local
 sudo rsync -av /local/ /mnt/local/
 sudo rm -rvf /local/*
 sudo mount -o bind /mnt/local /local
