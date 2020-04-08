@@ -179,6 +179,7 @@ sudo apt-get update && \
 
 sudo ldconfig
 
+sudo pip install -r /local/repository/requirements_madlib.txt
 
 
 
