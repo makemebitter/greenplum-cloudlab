@@ -60,14 +60,14 @@ if [ "$duty" = "m" ]; then
 fi
 # -----------------------------------------------------------------------------
 # Get the extra filesystem otherwise no enough disk space
-sudo /usr/local/etc/emulab/mkextrafs.pl /mnt
-# sudo mkdir /mnt/local
-chmod 777 -R /local
-chmod 777 -R /mnt
 
-sudo rsync -av /local/ /mnt/local/
+# sudo mkdir /mnt/local
+# chmod 777 -R /local /mnt
+
+
+
 # sudo rm -rvf /local/*
-sudo mount -o bind /mnt/local /local
+
 sudo mkdir /mnt/var.cache.apt.archives
 sudo rsync -av /var/cache/apt/archives/ /mnt/var.cache.apt.archives/
 sudo rm -rvf /var/cache/apt/archives/*
