@@ -7,7 +7,7 @@ echo "ssh-add /local/gpdb_key &> /dev/null" >> ~/.bashrc
 source ~/.bashrc
 echo "RemoveIPC=no" | sudo tee -a /etc/systemd/logind.conf
 sudo service systemd-logind restart
-echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard nofile 65536' |sudo tee -a /etc/security/limits.d/gpadmin-limits.conf
+echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard nofile 65536' | sudo tee -a /etc/security/limits.d/gpadmin-limits.conf
 
 
 

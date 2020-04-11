@@ -78,7 +78,7 @@ git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
 git clone https://github.com/greenplum-db/gporca.git /local/gporca
 git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
 git clone https://github.com/apache/madlib.git /local/madlib
-chmod 777 /local/gpdb_src /local/gporca /local/gp-xerces /local/madlib
+sudo chmod 777 /local/gpdb_src /local/gporca /local/gp-xerces /local/madlib
 export DEBIAN_FRONTEND=noninteractive
 cd /local
 sudo bash /local/gpdb_src/README.ubuntu.bash
@@ -129,11 +129,9 @@ echo "gpadmin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/gpadmin
 echo "${PRIVATE_KEY}" > /local/gpdb_key
 chown gpadmin /local/gpdb_key
 chmod 600 /local/gpdb_key
-# cat ~/.ssh/authorized_keys >> /home/gpadmin/.ssh/authorized_keys
-# echo >> /home/gpadmin/.ssh/authorized_keys
 ssh-keygen -y -f /local/gpdb_key >> /home/gpadmin/.ssh/authorized_keys
 
-chmod -R 777 /local
+
 sudo mkdir /gpdata
 sudo chown gpadmin /gpdata
 if [ "$duty" = "m" ]; then
@@ -185,7 +183,7 @@ sudo pip install -r /local/repository/requirements_madlib.txt
 
 
 # compile, install, and run gpdb, compile and install madlib
-sudo -H -u  gpadmin bash /local/repository/install_gpdb.sh ${duty}
+sudo -H -u gpadmin /local/repository/install_gpdb.sh ${duty}
 
 
 
