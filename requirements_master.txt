@@ -2,3 +2,8 @@ ipython==7.9.0
 jupyter
 jupyter_contrib_nbextensions
 jupyter_nbextensions_configurator
+ipython-sql
+psycopg2-binary
+Keras==2.2.4
+tensorflow-gpu==1.14
+Pillow==7.1.1

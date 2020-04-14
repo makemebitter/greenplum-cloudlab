@@ -10,7 +10,7 @@ echo "${PRIVATE_KEY}"
 
 
 sudo apt-get update;
-sudo apt-get install -y openssh-server openssh-client syslinux-utils python3-pip socat libffi-dev python-pip;
+sudo apt-get install -y openssh-server openssh-client syslinux-utils python3-pip socat libffi-dev python-pip htop;
 sudo apt-get install -y \
     apt-transport-https \
     ca-certificates \
@@ -132,11 +132,11 @@ chmod 600 /local/gpdb_key
 ssh-keygen -y -f /local/gpdb_key >> /home/gpadmin/.ssh/authorized_keys
 
 
-sudo mkdir /gpdata
-sudo chown gpadmin /gpdata
+sudo mkdir /mnt/gpdata
+sudo chown gpadmin /mnt/gpdata
 if [ "$duty" = "m" ]; then
-  sudo mkdir /gpdata_master
-  sudo chown gpadmin /gpdata_master
+  sudo mkdir /mnt/gpdata_master
+  sudo chown gpadmin /mnt/gpdata_master
 fi
 
 # install madlib dependencies
@@ -211,8 +211,8 @@ sudo -H -u gpadmin /local/repository/install_gpdb.sh ${duty}
 # Running Jupyter deamons
 if [ "$duty" = "m" ]; then
   # python
-  pip3 install --upgrade six
-  pip3 install -r /local/repository/requirements_master.txt;
+  sudo pip3 install --upgrade six
+  sudo pip3 install -r /local/repository/requirements_master.txt;
   # Jupyter extension configs
   sudo /usr/local/bin/jupyter contrib nbextension install --system ;
   sudo /usr/local/bin/jupyter nbextensions_configurator enable --system ;

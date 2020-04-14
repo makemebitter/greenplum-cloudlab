@@ -22,14 +22,14 @@ PORT_BASE=6000
 #### physical host (if multiple addresses for a host are listed in
 #### the hostfile, the number of segments will be spread evenly across
 #### the specified interface addresses).
-declare -a DATA_DIRECTORY=(/gpdata)
+declare -a DATA_DIRECTORY=(/mnt/gpdata)
 
 #### OS-configured hostname or IP address of the master host.
 MASTER_HOSTNAME=master
 
 #### File system location where the master data directory
 #### will be created.
-MASTER_DIRECTORY=/gpdata_master
+MASTER_DIRECTORY=/mnt/gpdata_master
 
 #### Port number for the master instance.
 MASTER_PORT=5432
