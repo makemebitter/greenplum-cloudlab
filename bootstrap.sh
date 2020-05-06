@@ -5,6 +5,9 @@ duty=${1}
 JUPYTER_PASSWORD=${2:-"root"}
 PRIVATE_KEY=${3}
 FILE_PATH=/local/gphost_list
+NFS_DIR=/mnt/nfs
+CPU_LOG_DIR=$NFS_DIR/logs/cpu_logs
+GPU_LOG_DIR=$NFS_DIR/logs/gpu_logs
 echo "PRIVATE KEY"
 echo "${PRIVATE_KEY}"
 
@@ -17,20 +20,14 @@ sudo apt-get install -y \
     curl \
     gnupg-agent \
     software-properties-common
-# docker
-# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-# sudo add-apt-repository -y \
-#    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-#    $(lsb_release -cs) \
-#    stable"
-# sudo apt-get update
-# sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+
 
 # python 3.6
-# sudo add-apt-repository ppa:deadsnakes/ppa
+# sudo add-apt-repository -y ppa:deadsnakes/ppa
 # sudo apt-get update
-# sudo apt-get install python3.6 python3.6-venv
+# sudo apt-get install -y python3.6 python3.6-venv python3.6-dev
 # curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
+# curl https://bootstrap.pypa.io/get-pip.py | sudo python
 
 
 # --------------------- Check if every host online ----------------------------
@@ -68,17 +65,46 @@ fi
 
 # sudo rm -rvf /local/*
 
+
 sudo mkdir /mnt/var.cache.apt.archives
 sudo rsync -av /var/cache/apt/archives/ /mnt/var.cache.apt.archives/
 sudo rm -rvf /var/cache/apt/archives/*
 sudo mount -o bind /mnt/var.cache.apt.archives/ /var/cache/apt/archives/
+
+sudo mkdir /mnt/home
+sudo rsync -av /home/ /mnt/home/
+sudo rm -rvf /home/*
+sudo mount -o bind /mnt/home/ /home/
+
+sudo mkdir /mnt/usr.lib
+sudo rsync -av /usr/lib/ /mnt/usr.lib/
+sudo rm -rvf /usr/lib/*
+mount -o bind /mnt/usr.lib/ /usr/lib/
+
+sudo mkdir /mnt/var.lib
+sudo rsync -av /var/lib/ /mnt/var.lib/
+sudo rm -rvf /var/lib/*
+mount -o bind /mnt/var.lib/ /var/lib/
+
+sudo mkdir /mnt/var.cache
+sudo rsync -av /var/cache/ /mnt/var.cache/
+sudo rm -rvf /var/cache/*
+mount -o bind /mnt/var.cache/ /var/cache/
+
+sudo mkdir /mnt/usr.local
+sudo rsync -av /usr/local/ /mnt/usr.local/
+sudo rm -rvf /usr/local/*
+mount -o bind /mnt/usr.local/ /usr/local/
+
+sudo dpkg --configure -a
 # greenplum
 # ------------------------- system settings -----------------------------------
 git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
 git clone https://github.com/greenplum-db/gporca.git /local/gporca
 git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
-git clone https://github.com/apache/madlib.git /local/madlib
-sudo chmod 777 /local/gpdb_src /local/gporca /local/gp-xerces /local/madlib
+git clone --single-branch --branch cerebro https://github.com/makemebitter/madlib.git /local/madlib
+git clone https://github.com/makemebitter/cerebro-greenplum.git /local/cerebro-greenplum
+sudo chmod 777 /local/gpdb_src /local/gporca /local/gp-xerces /local/madlib /local/cerebro-greenplum
 export DEBIAN_FRONTEND=noninteractive
 cd /local
 sudo bash /local/gpdb_src/README.ubuntu.bash
@@ -157,6 +183,7 @@ sudo apt install -y ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
 sudo apt-get update
 
 
+
 # Install NVIDIA driver
 # Issue with driver install requires creating /usr/lib/nvidia
 sudo mkdir /usr/lib/nvidia
@@ -176,7 +203,41 @@ sudo apt-get update && \
         && sudo apt-get update \
         && sudo apt-get install -y --no-install-recommends libnvinfer5=5.0.2-1+cuda10.0 libnvinfer-dev=5.0.2-1+cuda10.0
 
+
+# # CUDA 10.1
+# Add NVIDIA package repositories
+# Add HTTPS support for apt-key
+sudo apt-get -y install gnupg-curl
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_10.1.243-1_amd64.deb
+sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+sudo dpkg -i cuda-repo-ubuntu1604_10.1.243-1_amd64.deb
+sudo apt-get update
+wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+sudo apt install -y ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+sudo apt-get update
+
+# Install NVIDIA driver
+# Issue with driver install requires creating /usr/lib/nvidia
+sudo mkdir /usr/lib/nvidia
+sudo apt-get install -y --no-install-recommends nvidia-440
+# Reboot. Check that GPUs are visible using the command: nvidia-smi
+
+# Install development and runtime libraries (~4GB)
+sudo apt-get install -y --no-install-recommends \
+    cuda-10-1 \
+    libcudnn7=7.6.4.38-1+cuda10.1  \
+    libcudnn7-dev=7.6.4.38-1+cuda10.1
+
+
+# Install TensorRT. Requires that libcudnn7 is installed above.
+sudo apt-get install -y --no-install-recommends \
+    libnvinfer6=6.0.1-1+cuda10.1 \
+    libnvinfer-dev=6.0.1-1+cuda10.1 \
+    libnvinfer-plugin6=6.0.1-1+cuda10.1
+
+
 sudo ldconfig
+
 
 sudo pip install -r /local/repository/requirements_madlib.txt
 
@@ -208,32 +269,67 @@ sudo -H -u gpadmin /local/repository/install_gpdb.sh ${duty}
 # echo "export SPARK_LOCAL_IP=$LOCAL_IP" | sudo tee -a /usr/local/spark/conf/spark-env.sh;
 # echo "export PYSPARK_PYTHON=python3.6" | sudo tee -a /usr/local/spark/conf/spark-env.sh;
 
+# NFS
+
+sudo apt-get -y install nfs-kernel-server
+sudo apt-get -y install nfs-common
+sudo mkdir $NFS_DIR
+sudo chmod 777 -R $NFS_DIR;
 # Running Jupyter deamons
 if [ "$duty" = "m" ]; then
-  # python
-  sudo pip3 install --upgrade six
-  sudo pip3 install -r /local/repository/requirements_master.txt;
-  # Jupyter extension configs
-  sudo /usr/local/bin/jupyter contrib nbextension install --system ;
-  sudo /usr/local/bin/jupyter nbextensions_configurator enable --system ;
-  sudo /usr/local/bin/jupyter nbextension enable code_prettify/code_prettify --system ;
-  sudo /usr/local/bin/jupyter nbextension enable execute_time/ExecuteTime --system ;
-  sudo /usr/local/bin/jupyter nbextension enable collapsible_headings/main --system ;
-  sudo /usr/local/bin/jupyter nbextension enable freeze/main --system ;
-  sudo /usr/local/bin/jupyter nbextension enable spellchecker/main --system ;
-
-  # Jupyter password
-  mkdir -p ~/.jupyter;
-  HASHED_PASSWORD=$(python3 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
-  echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
-  echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
-    sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /dev/null 2>&1 &
+    echo "$NFS_DIR  *(rw,sync,crossmnt,no_root_squash,crossmnt)" | sudo tee -a  /etc/exports
+    sudo /etc/init.d/nfs-kernel-server restart
+    # python
+    sudo pip3 install --upgrade six
+    sudo pip3 install -r /local/repository/requirements_master.txt;
+    # Jupyter extension configs
+    sudo /usr/local/bin/jupyter contrib nbextension install --system ;
+    sudo /usr/local/bin/jupyter nbextensions_configurator enable --system ;
+    sudo /usr/local/bin/jupyter nbextension enable code_prettify/code_prettify --system ;
+    sudo /usr/local/bin/jupyter nbextension enable execute_time/ExecuteTime --system ;
+    sudo /usr/local/bin/jupyter nbextension enable collapsible_headings/main --system ;
+    sudo /usr/local/bin/jupyter nbextension enable freeze/main --system ;
+    sudo /usr/local/bin/jupyter nbextension enable spellchecker/main --system ;
+    # docker
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository -y \
+    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) \
+    stable"
+    sudo apt-get update
+    sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+    echo 'DOCKER_OPTS="-g /mnt"' | sudo tee -a /etc/default/docker
+    sudo service docker stop
+    sudo service docker start
+    sudo mkdir /mnt/var.lib.docker
+    sudo rsync -av /var/lib/docker/ /mnt/var.lib.docker/
+    sudo rm -rvf /var/lib/docker/*
+    sudo mount -o bind /mnt/var.lib.docker/ /var/lib/docker/
+    # Jupyter password
+    mkdir -p ~/.jupyter;
+    HASHED_PASSWORD=$(python3 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
+    echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
+    echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
+    sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /local/logs/theia.log 2>&1 &
     sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /dev/null 2>&1 &
 fi
+elif [ "$duty" = "s" ]; then
+    # For workers
+    # Mount nfs
+    n=0
+    until [ $n -ge 1000 ]
+    do
+       sudo mount master:$NFS_DIR $NFS_DIR && break  # substitute your command here
+       n=$[$n+1]
+       sleep 15
+    done
+    
+fi
 
-# elif [ "$duty" = "s" ]; then
-#   gpssh-exkeys -f hostlist_singlenode
-# fi
+sudo nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR & \
+sudo nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR & \
+sudo chmod -R 777 $NFS_DIR
+
 echo "Bootstraping complete"
 
 

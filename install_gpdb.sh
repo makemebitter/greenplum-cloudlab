@@ -4,6 +4,9 @@ set -e
 # system settings
 echo 'eval `ssh-agent` &> /dev/null' >> ~/.bashrc
 echo "ssh-add /local/gpdb_key &> /dev/null" >> ~/.bashrc
+echo 'export PYTHONPATH="${PYTHONPATH}:/usr/local/lib/python2.7/dist-packages"' >> ~/.bashrc
+echo 'export WORKER_NAME=$(cat /proc/sys/kernel/hostname | cut -d'.' -f1)' | sudo tee -a ~/.bashrc
+echo 'export WORKER_NUMBER=$(sed -n -e 's/^.*worker//p' <<<"$WORKER_NAME")' | sudo tee -a ~/.bashrc
 source ~/.bashrc
 echo "RemoveIPC=no" | sudo tee -a /etc/systemd/logind.conf
 sudo service systemd-logind restart
@@ -42,7 +45,7 @@ echo 'source /usr/local/gpdb/greenplum_path.sh' >> ~/.bashrc
 source ~/.bashrc
 sudo chown -R gpadmin:gpadmin /usr/local/gpdb
 # important missing dependency
-pip install paramiko;
+sudo pip install paramiko;
 
 # madlib
 cd /local/madlib;
@@ -93,7 +96,7 @@ if [ "$duty" = "m" ]; then
             gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
             echo $?
             set -e
-            echo 'export MASTER_DATA_DIRECTORY=/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
+            echo 'export MASTER_DATA_DIRECTORY=/mnt/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
             /local/madlib/build/src/bin/madpack -p greenplum -c gpadmin@master:5432/cerebro install
             break
         else
