@@ -1,9 +1,5 @@
-"""greenplum cluster WIP"""
+"""greenplum cluster"""
 
-#
-# NOTE: This code was machine converted. An actual human would not
-#       write code like this!
-#
 
 # Import the Portal object.
 import geni.portal as portal
