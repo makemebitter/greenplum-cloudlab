@@ -68,9 +68,10 @@ sudo rm -rvf /home/*
 sudo mount -o bind /mnt/home/ /home/
 
 sudo mkdir /mnt/tmp
-sudo rsync -av /tmp /mnt/tmp/
+sudo rsync -av /tmp/ /mnt/tmp/
 sudo rm -rvf /tmp/*
 sudo mount -o bind /mnt/tmp/ /tmp/
+sudo chmod 1777 /tmp
 
 
 sudo mkdir /mnt/var.lib
