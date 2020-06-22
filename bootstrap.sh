@@ -22,11 +22,11 @@ sudo apt-get install -y \
     software-properties-common
 
 
-# python 3.6
-# sudo add-apt-repository -y ppa:deadsnakes/ppa
-# sudo apt-get update
-# sudo apt-get install -y python3.6 python3.6-venv python3.6-dev
-# curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
+# python 3.7
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install -y python3.7 python3.7-venv python3.7-dev
+# curl https://bootstrap.pypa.io/get-pip.py | sudo python3.7
 # curl https://bootstrap.pypa.io/get-pip.py | sudo python
 
 
@@ -76,6 +76,10 @@ sudo rsync -av /home/ /mnt/home/
 sudo rm -rvf /home/*
 sudo mount -o bind /mnt/home/ /home/
 
+sudo mkdir /mnt/tmp
+sudo rsync -av /tmp /mnt/tmp/
+sudo rm -rvf /tmp/*
+sudo mount -o bind /mnt/tmp/ /tmp/
 
 
 sudo mkdir /mnt/var.lib
@@ -208,33 +212,33 @@ sudo pip install --upgrade pip
 # # CUDA 10.1
 # Add NVIDIA package repositories
 # Add HTTPS support for apt-key
-sudo apt-get -y install gnupg-curl
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_10.1.243-1_amd64.deb
-sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
-sudo dpkg -i cuda-repo-ubuntu1604_10.1.243-1_amd64.deb
-sudo apt-get update
-wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
-sudo apt install -y ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
-sudo apt-get update
+# sudo apt-get -y install gnupg-curl
+# wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_10.1.243-1_amd64.deb
+# sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+# sudo dpkg -i cuda-repo-ubuntu1604_10.1.243-1_amd64.deb
+# sudo apt-get update
+# wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+# sudo apt install -y ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+# sudo apt-get update
 
-# Install NVIDIA driver
-# Issue with driver install requires creating /usr/lib/nvidia
-sudo mkdir /usr/lib/nvidia
-sudo apt-get install -y --no-install-recommends nvidia-440
-# Reboot. Check that GPUs are visible using the command: nvidia-smi
+# # Install NVIDIA driver
+# # Issue with driver install requires creating /usr/lib/nvidia
+# sudo mkdir /usr/lib/nvidia
+# sudo apt-get install -y --no-install-recommends nvidia-440
+# # Reboot. Check that GPUs are visible using the command: nvidia-smi
 
-# Install development and runtime libraries (~4GB)
-sudo apt-get install -y --no-install-recommends \
-    cuda-10-1 \
-    libcudnn7=7.6.4.38-1+cuda10.1  \
-    libcudnn7-dev=7.6.4.38-1+cuda10.1
+# # Install development and runtime libraries (~4GB)
+# sudo apt-get install -y --no-install-recommends \
+#     cuda-10-1 \
+#     libcudnn7=7.6.4.38-1+cuda10.1  \
+#     libcudnn7-dev=7.6.4.38-1+cuda10.1
 
 
-# Install TensorRT. Requires that libcudnn7 is installed above.
-sudo apt-get install -y --no-install-recommends \
-    libnvinfer6=6.0.1-1+cuda10.1 \
-    libnvinfer-dev=6.0.1-1+cuda10.1 \
-    libnvinfer-plugin6=6.0.1-1+cuda10.1
+# # Install TensorRT. Requires that libcudnn7 is installed above.
+# sudo apt-get install -y --no-install-recommends \
+#     libnvinfer6=6.0.1-1+cuda10.1 \
+#     libnvinfer-dev=6.0.1-1+cuda10.1 \
+#     libnvinfer-plugin6=6.0.1-1+cuda10.1
 
 
 sudo ldconfig
@@ -312,7 +316,7 @@ if [ "$duty" = "m" ]; then
     echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
     echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
     sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /local/logs/theia.log 2>&1 &
-    sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /dev/null 2>&1 &
+    sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /local/logs/jupyter.log 2>&1 &
 fi
 elif [ "$duty" = "s" ]; then
     # For workers
@@ -326,6 +330,9 @@ elif [ "$duty" = "s" ]; then
     done
     
 fi
+echo 'export WORKER_NAME=$(cat /proc/sys/kernel/hostname | cut -d'.' -f1)' | sudo tee -a ~/.bashrc
+echo 'export WORKER_NUMBER=$(sed -n -e 's/^.*worker//p' <<<"$WORKER_NAME")' | sudo tee -a ~/.bashrc
+source ~/.bashrc
 
 sudo nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR & \
 sudo nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR & \
