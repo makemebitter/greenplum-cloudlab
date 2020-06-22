@@ -60,16 +60,7 @@ fi
 
 # sudo mkdir /mnt/local
 # chmod 777 -R /local /mnt
-
-
-
 # sudo rm -rvf /local/*
-
-
-sudo mkdir /mnt/var.cache.apt.archives
-sudo rsync -av /var/cache/apt/archives/ /mnt/var.cache.apt.archives/
-sudo rm -rvf /var/cache/apt/archives/*
-sudo mount -o bind /mnt/var.cache.apt.archives/ /var/cache/apt/archives/
 
 sudo mkdir /mnt/home
 sudo rsync -av /home/ /mnt/home/
@@ -93,10 +84,10 @@ sudo rm -rvf /var/cache/*
 sudo mount -o bind /mnt/var.cache/ /var/cache/
 
 # Don't use
-# sudo mkdir /mnt/usr.local
-# sudo rsync -av /usr/local/ /mnt/usr.local/
-# sudo rm -rvf /usr/local/*
-# sudo mount -o bind /mnt/usr.local/ /usr/local/
+sudo mkdir /mnt/usr.local
+sudo rsync -av /usr/local/ /mnt/usr.local/
+sudo rm -rvf /usr/local/*
+sudo mount -o bind /mnt/usr.local/ /usr/local/
 
 
 sudo dpkg --configure -a
