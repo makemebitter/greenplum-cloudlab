@@ -310,8 +310,6 @@ if [ "$duty" = "m" ]; then
     echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
     sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /local/logs/theia.log 2>&1 &
     sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /local/logs/jupyter.log 2>&1 &
-
-
 elif [ "$duty" = "s" ]; then
     # For workers
     # Mount nfs
@@ -336,7 +334,7 @@ echo "Bootstraping complete"
 
 
 cp ~/.bashrc /local/.bashrc
-touch /local/SUCCESS
+touch /local/ALL_SUCCESS
 
 
 

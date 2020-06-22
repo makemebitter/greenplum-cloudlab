@@ -1,12 +1,26 @@
 #!/bin/bash
 duty=${1}
 set -e
+FILE_PATH=/local/gphost_list
+TAG_PATH=/local/GPDB_SUCCESS
 # system settings
 echo 'eval `ssh-agent` &> /dev/null' >> ~/.bashrc
 echo "ssh-add /local/gpdb_key &> /dev/null" >> ~/.bashrc
 echo 'export PYTHONPATH="${PYTHONPATH}:/usr/local/lib/python2.7/dist-packages"' >> ~/.bashrc
 echo 'export WORKER_NAME=$(cat /proc/sys/kernel/hostname | cut -d'.' -f1)' | sudo tee -a ~/.bashrc
 echo 'export WORKER_NUMBER=$(sed -n -e 's/^.*worker//p' <<<"$WORKER_NAME")' | sudo tee -a ~/.bashrc
+
+
+sudo bash -c 'cat >> /home/gpadmin/.bashrc <<-EOF
+export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
+export HISTSIZE=100000                   # big big history
+export HISTFILESIZE=100000               # big big history
+shopt -s histappend                      # append to history, dont overwrite it
+
+# Save and reload the history after each command finishes
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+EOF'
+
 source ~/.bashrc
 echo "RemoveIPC=no" | sudo tee -a /etc/systemd/logind.conf
 sudo service systemd-logind restart
@@ -70,8 +84,6 @@ make -j;
 
 echo "GPDB INSTALLATION FINISHED"
 if [ "$duty" = "m" ]; then
-    FILE_PATH=/local/gphost_list
-    TAG_PATH=/local/SUCCESS
     readarray -t hosts < $FILE_PATH
     while true; do
         echo "Checking if all hosts finished"
@@ -106,4 +118,6 @@ if [ "$duty" = "m" ]; then
     done
     echo "GPDB INITIALIZATION FINISHED"    
 fi
+touch $TAG_PATH
 echo "GPDB SCRIPT EXISTING"
+
