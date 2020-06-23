@@ -326,8 +326,8 @@ echo 'export WORKER_NAME=$(cat /proc/sys/kernel/hostname | cut -d'.' -f1)' | sud
 echo 'export WORKER_NUMBER=$(sed -n -e 's/^.*worker//p' <<<"$WORKER_NAME")' | sudo tee -a ~/.bashrc
 source ~/.bashrc
 
-nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR & \
-nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR & \
+nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR &
+nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR &
 sudo chmod -R 777 $NFS_DIR
 
 echo "Bootstraping complete"
