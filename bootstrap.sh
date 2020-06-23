@@ -278,16 +278,16 @@ if [ "$duty" = "m" ]; then
     echo "$NFS_DIR  *(rw,sync,crossmnt,no_root_squash,crossmnt)" | sudo tee -a  /etc/exports
     sudo /etc/init.d/nfs-kernel-server restart
     # python
-    sudo pip3 install --upgrade six
-    sudo pip3 install -r /local/repository/requirements_master.txt;
+    sudo python3.7 -m pip install --upgrade six
+    sudo python3.7 -m pip install -r /local/repository/requirements_master.txt;
     # Jupyter extension configs
-    sudo /usr/local/bin/jupyter contrib nbextension install --system ;
-    sudo /usr/local/bin/jupyter nbextensions_configurator enable --system ;
-    sudo /usr/local/bin/jupyter nbextension enable code_prettify/code_prettify --system ;
-    sudo /usr/local/bin/jupyter nbextension enable execute_time/ExecuteTime --system ;
-    sudo /usr/local/bin/jupyter nbextension enable collapsible_headings/main --system ;
-    sudo /usr/local/bin/jupyter nbextension enable freeze/main --system ;
-    sudo /usr/local/bin/jupyter nbextension enable spellchecker/main --system ;
+    sudo python3.7 -m jupyter contrib nbextension install --system ;
+    sudo python3.7 -m jupyter nbextensions_configurator enable --system ;
+    sudo python3.7 -m jupyter nbextension enable code_prettify/code_prettify --system ;
+    sudo python3.7 -m jupyter nbextension enable execute_time/ExecuteTime --system ;
+    sudo python3.7 -m jupyter nbextension enable collapsible_headings/main --system ;
+    sudo python3.7 -m jupyter nbextension enable freeze/main --system ;
+    sudo python3.7 -m jupyter nbextension enable spellchecker/main --system ;
     # docker
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository -y \
