@@ -305,7 +305,7 @@ if [ "$duty" = "m" ]; then
     sudo mount -o bind /mnt/var.lib.docker/ /var/lib/docker/
     # Jupyter password
     mkdir -p ~/.jupyter;
-    HASHED_PASSWORD=$(python3 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
+    HASHED_PASSWORD=$(python3.7 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
     echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
     echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
     sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /local/logs/theia.log 2>&1 &
@@ -326,8 +326,8 @@ echo 'export WORKER_NAME=$(cat /proc/sys/kernel/hostname | cut -d'.' -f1)' | sud
 echo 'export WORKER_NUMBER=$(sed -n -e 's/^.*worker//p' <<<"$WORKER_NAME")' | sudo tee -a ~/.bashrc
 source ~/.bashrc
 
-sudo nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR & \
-sudo nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR & \
+nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR & \
+nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR & \
 sudo chmod -R 777 $NFS_DIR
 
 echo "Bootstraping complete"
