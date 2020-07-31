@@ -42,7 +42,7 @@ sudo make install
 
 # gp-orca 
 cd /local/gporca
-sudo git checkout 1c280c0f2e657511a4be50866baaf2e8b4411cb7
+git checkout 1c280c0f2e657511a4be50866baaf2e8b4411cb7
 cmake -DCMAKE_INSTALL_PREFIX=/usr/local -GNinja -H. -Bbuild 
 sudo ninja install -C build
 
@@ -51,10 +51,10 @@ sudo ldconfig
 
 # gpdb
 cd /local/gpdb_src
-sudo git checkout 5X_STABLE
-sudo git checkout 1a2454ab280521445c3d1f4d8f1afa6dcc08e5af
+# git checkout 5X_STABLE
+git checkout 6117a957007f1f2f402c0c2581e6078e4b284b41
 ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
-make -j
+sudo make -j
 sudo make -j install
 /usr/local/gpdb/bin/generate-greenplum-path.sh
 echo 'source /usr/local/gpdb/greenplum_path.sh' >> ~/.bashrc

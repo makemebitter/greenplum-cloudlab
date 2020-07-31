@@ -327,6 +327,8 @@ fi
 echo 'export WORKER_NAME=$(cat /proc/sys/kernel/hostname | cut -d'.' -f1)' | sudo tee -a "/home/$PROJECT_USER/.bashrc"
 echo 'export WORKER_NUMBER=$(sed -n -e 's/^.*worker//p' <<<"$WORKER_NAME")' | sudo tee -a "/home/$PROJECT_USER/.bashrc"
 source "/home/$PROJECT_USER/.bashrc";
+
+
 echo $WORKER_NAME
 echo $WORKER_NUMBER
 
