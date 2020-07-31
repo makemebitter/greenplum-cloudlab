@@ -97,11 +97,13 @@ sudo dpkg --configure -a
 # greenplum
 # ------------------------- system settings -----------------------------------
 git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
+cd /local/gpdb_src
+git checkout 6117a957007f1f2f402c0c2581e6078e4b284b41
 git clone https://github.com/greenplum-db/gporca.git /local/gporca
 git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
 git clone --single-branch --branch cerebro https://github.com/makemebitter/madlib.git /local/madlib
 git clone https://github.com/makemebitter/cerebro-greenplum.git /local/cerebro-greenplum
-sudo chmod 777 /local/gpdb_src /local/gporca /local/gp-xerces /local/madlib /local/cerebro-greenplum
+sudo chmod 777 -R  /local/gpdb_src /local/gporca /local/gp-xerces /local/madlib /local/cerebro-greenplum
 export DEBIAN_FRONTEND=noninteractive
 cd /local
 sudo bash /local/gpdb_src/README.ubuntu.bash
