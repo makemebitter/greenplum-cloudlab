@@ -9,7 +9,7 @@ echo "ssh-add /local/gpdb_key &> /dev/null" >> ~/.bashrc
 echo 'export PYTHONPATH="${PYTHONPATH}:/usr/local/lib/python2.7/dist-packages"' >> ~/.bashrc
 echo 'export WORKER_NAME=$(cat /proc/sys/kernel/hostname | cut -d'.' -f1)' | sudo tee -a ~/.bashrc
 echo 'export WORKER_NUMBER=$(sed -n -e 's/^.*worker//p' <<<"$WORKER_NAME")' | sudo tee -a ~/.bashrc
-
+echo '[[ -s ~/.bashrc ]] && source ~/.bashrc' >> ~/.bash_profile
 
 sudo bash -c 'cat >> /home/gpadmin/.bashrc <<-EOF
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
@@ -106,10 +106,18 @@ if [ "$duty" = "m" ]; then
             cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
             set +e
             gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
+            gpconfig -c gp_vmem_protect_limit -v 153600
+            # gpconfig -c log_statement -v mod
+            # gpconfig -c gp_resqueue_memory_policy -v auto
+            gpconfig -c max_statement_mem -v 153600MB
+            gpconfig -c statement_mem -v 15360MB
+            gpstop -a
+            gpstart -a
             echo $?
             set -e
             echo 'export MASTER_DATA_DIRECTORY=/mnt/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
             /local/madlib/build/src/bin/madpack -p greenplum -c gpadmin@master:5432/cerebro install
+
             break
         else
             echo "WAITING"

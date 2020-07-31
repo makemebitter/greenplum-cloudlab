@@ -8,8 +8,10 @@ FILE_PATH=/local/gphost_list
 NFS_DIR=/mnt/nfs
 CPU_LOG_DIR=$NFS_DIR/logs/cpu_logs
 GPU_LOG_DIR=$NFS_DIR/logs/gpu_logs
+PROJECT_USER=gpadmin
 echo "PRIVATE KEY"
 echo "${PRIVATE_KEY}"
+
 
 
 sudo apt-get update;
@@ -242,7 +244,7 @@ sudo pip install -r /local/repository/requirements_madlib.txt
 
 
 # compile, install, and run gpdb, compile and install madlib
-sudo -H -u gpadmin /local/repository/install_gpdb.sh ${duty}
+sudo -H -u $PROJECT_USER /local/repository/install_gpdb.sh ${duty}
 
 
 
@@ -322,12 +324,14 @@ elif [ "$duty" = "s" ]; then
     done
     
 fi
-echo 'export WORKER_NAME=$(cat /proc/sys/kernel/hostname | cut -d'.' -f1)' | sudo tee -a ~/.bashrc
-echo 'export WORKER_NUMBER=$(sed -n -e 's/^.*worker//p' <<<"$WORKER_NAME")' | sudo tee -a ~/.bashrc
-source ~/.bashrc
+echo 'export WORKER_NAME=$(cat /proc/sys/kernel/hostname | cut -d'.' -f1)' | sudo tee -a "/home/$PROJECT_USER/.bashrc"
+echo 'export WORKER_NUMBER=$(sed -n -e 's/^.*worker//p' <<<"$WORKER_NAME")' | sudo tee -a "/home/$PROJECT_USER/.bashrc"
+source "/home/$PROJECT_USER/.bashrc";
+echo $WORKER_NAME
+echo $WORKER_NUMBER
 
-nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR &
-nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR &
+sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR &
+sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR &
 sudo chmod -R 777 $NFS_DIR
 
 echo "Bootstraping complete"
