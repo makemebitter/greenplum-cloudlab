@@ -44,15 +44,20 @@ sudo make install
 cd /local/gporca
 git checkout 1c280c0f2e657511a4be50866baaf2e8b4411cb7
 cmake -DCMAKE_INSTALL_PREFIX=/usr/local -GNinja -H. -Bbuild 
+set +e
+# run twice for bypassing ccache issue, first run will create the needed files
 sudo ninja install -C build
+sudo ninja install -C build
+set -e
 
 # refresh dynamic libs
 sudo ldconfig
 
 # gpdb
+
 cd /local/gpdb_src
 # git checkout 5X_STABLE
-cd /local/gpdb_src
+git reset --hard HEAD
 git checkout 6117a957007f1f2f402c0c2581e6078e4b284b41
 ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
 make -j
