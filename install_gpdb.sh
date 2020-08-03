@@ -54,7 +54,9 @@ set -e
 sudo ldconfig
 
 # gpdb
-
+sudo pip install cryptography==2.9.2;
+# important missing dependency
+sudo pip install lockfile;
 cd /local/gpdb_src
 # git checkout 5X_STABLE
 git reset --hard HEAD
