@@ -1,6 +1,10 @@
 numpy==1.16.0
 h5py==2.9.0
 Scipy==1.2.1
-Keras==2.2.4
+Keras==2.2.5
 grpcio==1.26.0
 tensorflow-gpu==1.14
+psycopg2-binary
+dill
+pandas
+netifaces

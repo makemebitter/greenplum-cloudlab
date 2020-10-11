@@ -8,6 +8,7 @@ FILE_PATH=/local/gphost_list
 NFS_DIR=/mnt/nfs
 CPU_LOG_DIR=$NFS_DIR/logs/cpu_logs
 GPU_LOG_DIR=$NFS_DIR/logs/gpu_logs
+NETWORK_LOG_DIR=$NFS_DIR/logs/network_logs
 PROJECT_USER=gpadmin
 echo "PRIVATE KEY"
 echo "${PRIVATE_KEY}"
@@ -163,6 +164,28 @@ if [ "$duty" = "m" ]; then
   sudo chown gpadmin /mnt/gpdata_master
 fi
 
+for size in 1 2 4
+do
+    sudo mkdir /mnt/gpdata_$size
+    sudo chown gpadmin /mnt/gpdata_$size
+    if [ "$duty" = "m" ]; then
+        sudo mkdir /mnt/gpdata_$size_master
+        sudo chown gpadmin /mnt/gpdata_$size_master
+    fi
+done
+
+# for size in 1 2 4
+# do
+#     sudo mkdir "/mnt/gpdata_${size}_master"
+#     sudo chown gpadmin "/mnt/gpdata_${size}_master"
+# done
+
+# for size in 1 2 4
+# do
+#     sudo mkdir /mnt/gpdata_$size
+#     sudo chown gpadmin /mnt/gpdata_$size
+# done
+
 # install madlib dependencies
 echo "/usr/local/cuda/extras/CUPTI/lib64" | sudo tee -a /etc/ld.so.conf
 sudo rm -rvf /usr/lib/python2.7/dist-packages/OpenSSL
@@ -313,8 +336,26 @@ if [ "$duty" = "m" ]; then
     HASHED_PASSWORD=$(python3.7 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
     echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
     echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
-    sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /local/logs/theia.log 2>&1 &
     sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /local/logs/jupyter.log 2>&1 &
+    # Theia
+    sudo python3.7 -m pip install python-language-server flake8 autopep8
+    sudo apt-get install curl
+    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    sudo apt-get update && sudo apt-get -y install yarn
+    mkdir /local/theia
+    wget https://raw.githubusercontent.com/theia-ide/theia-apps/master/theia-python-docker/latest.package.json -O /local/theia/package.json
+    cd /local/theia
+    yarn --cache-folder ./ycache && rm -rf ./ycache && \
+     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build ; \
+    yarn theia download:plugins
+    export THEIA_DEFAULT_PLUGINS=local-dir:/local/theia/plugins
+    sudo nohup yarn theia start / --hostname=0.0.0.0 > /local/logs/theia.log 2>&1 &
+    
+    # sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /local/logs/theia.log 2>&1 &
+    
 elif [ "$duty" = "s" ]; then
     # For workers
     # Mount nfs
@@ -336,7 +377,9 @@ echo $WORKER_NAME
 echo $WORKER_NUMBER
 
 sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR &
+if [ "$duty" = "s" ]; then
 sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR &
+fi
 sudo chmod -R 777 $NFS_DIR
 
 echo "Bootstraping complete"

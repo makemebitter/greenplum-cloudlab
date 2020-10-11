@@ -92,7 +92,7 @@ make -j;
 
 
 
-echo "GPDB INSTALLATION FINISHED"
+echo "GPDB INSTALLATION FINISHED"s
 if [ "$duty" = "m" ]; then
     readarray -t hosts < $FILE_PATH
     while true; do
@@ -116,6 +116,7 @@ if [ "$duty" = "m" ]; then
             cp /local/repository/gpinitsystem_config /local/gpinitsystem_config
             set +e
             gpinitsystem -a -c /local/gpinitsystem_config -h /local/gphost_list
+            gpstart -a
             gpconfig -c gp_vmem_protect_limit -v 153600
             # gpconfig -c log_statement -v mod
             # gpconfig -c gp_resqueue_memory_policy -v auto
