@@ -165,16 +165,17 @@ if [ "$duty" = "m" ]; then
   sudo chown gpadmin /mnt/gpdata_master
 fi
 
+set +e
 for size in 1 2 4
 do
-    sudo mkdir /mnt/gpdata_$size
-    sudo chown gpadmin /mnt/gpdata_$size
+    sudo mkdir "/mnt/gpdata_${size}"
+    sudo chown gpadmin "/mnt/gpdata_${size}"
     if [ "$duty" = "m" ]; then
-        sudo mkdir /mnt/gpdata_$size_master
-        sudo chown gpadmin /mnt/gpdata_$size_master
+        sudo mkdir "/mnt/gpdata_${size}_master"
+        sudo chown gpadmin "/mnt/gpdata_${size}_master"
     fi
 done
-
+set -e
 # for size in 1 2 4
 # do
 #     sudo mkdir "/mnt/gpdata_${size}_master"
