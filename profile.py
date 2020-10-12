@@ -35,6 +35,8 @@ pc.defineParameter("osNodeTypeMaster", "Hardware Type for master",
                      allocated.''')
 pc.defineParameter("jupyterPassword", "The password of jupyter notebook, default: root",
                    portal.ParameterType.STRING, 'root')
+pc.defineParameter("GPUWorkers", "Workers have GPU or not, default: 1",
+                   portal.ParameterType.INTEGER, 1)
 pc.defineParameter("publicIPSlaves", "Request public IP addresses for the slaves or not",
                    portal.ParameterType.BOOLEAN, True)
 
@@ -70,8 +72,8 @@ def create_request(request, role, ip, worker_num=None):
     req.disk_image = DISK_IMG
     req.addService(pg.Execute(
         'bash',
-        "sudo /usr/local/etc/emulab/mkextrafs.pl /mnt; sudo chmod 777 -R /local /mnt; rsync -av /local/ /mnt/local/; sudo mount -o bind /mnt/local /local; sudo bash /local/repository/bootstrap.sh '{}' '{}' '{}' 2>&1 | sudo tee -a /local/logs/setup.log".format(
-            role, params.jupyterPassword, proper_key)))
+        "sudo /usr/local/etc/emulab/mkextrafs.pl /mnt; sudo chmod 777 -R /local /mnt; rsync -av /local/ /mnt/local/; sudo mount -o bind /mnt/local /local; sudo bash /local/repository/bootstrap.sh '{}' '{}' '{}' '{}' 2>&1 | sudo tee -a /local/logs/setup.log".format(
+            role, params.jupyterPassword, proper_key, params.GPUWorkers)))
     iface = req.addInterface(
         'eth1', pg.IPv4Address(ip, '255.255.255.0'))
     return iface

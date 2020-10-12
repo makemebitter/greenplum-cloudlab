@@ -4,6 +4,7 @@ set -e
 duty=${1}
 JUPYTER_PASSWORD=${2:-"root"}
 PRIVATE_KEY=${3}
+GPU_WORKERS=${4}
 FILE_PATH=/local/gphost_list
 NFS_DIR=/mnt/nfs
 CPU_LOG_DIR=$NFS_DIR/logs/cpu_logs
@@ -193,7 +194,7 @@ sudo pip install -U pyopenssl
 sudo pip install --upgrade pip
 
 
-if [ "$duty" = "s" ]; then
+if [ "$duty" = "s" ] && [ $GPU_WORKERS -eq 1 ]; then
     # CUDA 10.0
     # Add NVIDIA package repositories
     # Add HTTPS support for apt-key
@@ -377,7 +378,7 @@ echo $WORKER_NAME
 echo $WORKER_NUMBER
 
 sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR &
-if [ "$duty" = "s" ]; then
+if [ "$duty" = "s" ] && [ $GPU_WORKERS -eq 1 ]; then
 sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR &
 fi
 sudo chmod -R 777 $NFS_DIR
