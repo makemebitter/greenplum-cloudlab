@@ -33,18 +33,17 @@ drive --remote login
 # cd ~
 # mkdir google-drive
 # cd google-drive
-# grive -a --id "117246110265-ta3qd5but4ve8f1imiqr8ikfhj64k82c.apps.googleusercontent.com" --secret "rCOzVb1-Jix9rpyAQlpaDdvT"
 
 
 # wget https://github.com/makemebitter/gdrive-cli-builder/suites/1300909639/artifacts/20413740
 
-# Download gdrive-xxxx
-# sudo chmod +x gdrive-xxxx
-# mv gdrive-xxxx /usr/local/bin/gdrive
+# Download gdrive-linux-x64
+sudo chmod +x gdrive-linux-x64
+sudo mv gdrive-linux-x64 /usr/local/bin/gdrive
 gdrive about
 # gdrive upload -r -p 1Lp-o4utwAMsGkMfQhz0M0YUlfuvPxB-N /mnt/nfs/imagenet
 
 
 
 # Criteo preprocessing
-python2 preprocessing_criteo.py --data_root '/mnt/criteo' --log_root '/mnt/nfs/logs' --nfs_root '/mnt/criteo/tfrecords'
+python2 preprocessing_criteo.py --data_root '/mnt/criteo' --log_root '/mnt/nfs/logs' --nfs_root '/mnt/nfs/models/data_share/criteo/tfrecords'

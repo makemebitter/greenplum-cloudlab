@@ -335,6 +335,8 @@ if [ "$duty" = "m" ]; then
     sudo mount -o bind /mnt/var.lib.docker/ /var/lib/docker/
     # Jupyter password
     mkdir -p ~/.jupyter;
+    sudo python2 -m pip --use-feature=2020-resolver install ipykernel
+    sudo python2 -m ipykernel install --user
     HASHED_PASSWORD=$(python3.7 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
     echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
     echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
