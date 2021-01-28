@@ -7,9 +7,6 @@ PRIVATE_KEY=${3}
 GPU_WORKERS=${4}
 FILE_PATH=/local/gphost_list
 NFS_DIR=/mnt/nfs
-CPU_LOG_DIR=$NFS_DIR/logs/cpu_logs
-GPU_LOG_DIR=$NFS_DIR/logs/gpu_logs
-NETWORK_LOG_DIR=$NFS_DIR/logs/network_logs
 PROJECT_USER=gpadmin
 echo "PRIVATE KEY"
 echo "${PRIVATE_KEY}"
@@ -23,7 +20,8 @@ sudo apt-get install -y \
     ca-certificates \
     curl \
     gnupg-agent \
-    software-properties-common
+    software-properties-common \
+    sysstat
 
 
 # python 3.7
@@ -380,10 +378,11 @@ source "/home/$PROJECT_USER/.bashrc";
 echo $WORKER_NAME
 echo $WORKER_NUMBER
 
-sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR &
-if [ "$duty" = "s" ] && [ $GPU_WORKERS -eq 1 ]; then
-sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR &
-fi
+# sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/cpu_logger.sh $CPU_LOG_DIR &
+# if [ "$duty" = "s" ] && [ $GPU_WORKERS -eq 1 ]; then
+# sudo -H -u $PROJECT_USER nohup bash /local/cerebro-greenplum/bin/gpu_logger.sh $GPU_LOG_DIR &
+# fi
+sudo -H -u $PROJECT_USER bash /local/cerebro-greenplum/bin/run_loggers.sh $NFS_DIR $GPU_WORKERS $duty
 sudo chmod -R 777 $NFS_DIR
 
 echo "Bootstraping complete"
