@@ -192,7 +192,7 @@ set -e
 echo "/usr/local/cuda/extras/CUPTI/lib64" | sudo tee -a /etc/ld.so.conf
 sudo rm -rvf /usr/lib/python2.7/dist-packages/OpenSSL
 sudo pip install -U pyopenssl
-sudo pip install --upgrade pip
+sudo pip install --upgrade "pip < 21.0"
 
 
 if [ "$duty" = "s" ] && [ $GPU_WORKERS -eq 1 ]; then
