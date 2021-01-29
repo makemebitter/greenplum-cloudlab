@@ -135,6 +135,8 @@ if [ "$duty" = "m" ]; then
             sleep 5s
         fi
     done
+    gpstop -a -M fast
+    gpstart -a
     echo "GPDB INITIALIZATION FINISHED"    
 fi
 touch $TAG_PATH
