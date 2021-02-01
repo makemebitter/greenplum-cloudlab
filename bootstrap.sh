@@ -108,7 +108,6 @@ sudo bash /local/gpdb_src/README.ubuntu.bash
 echo /usr/local/lib | sudo tee -a  /etc/ld.so.conf
 sudo ldconfig
 sudo bash /local/gpdb_src/concourse/scripts/setup_gpadmin_user.bash
-echo "gpadmin:${GPADMIN_PASSWORD}" | sudo chpasswd
 sudo bash -c 'cat >> /etc/sysctl.conf <<-EOF
 kernel.shmmax = 500000000
 kernel.shmmni = 4096
@@ -148,7 +147,7 @@ EOF'
 sudo usermod -aG sudo gpadmin
 echo "gpadmin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/gpadmin
 sudo chown gpadmin -R  /local/gpdb_src /local/gporca /local/gp-xerces /local/madlib /local/cerebro-greenplum
-
+echo "gpadmin:${GPADMIN_PASSWORD}" | sudo chpasswd
 # -----------------------------------------------------------------------------
 
 # greenplum key

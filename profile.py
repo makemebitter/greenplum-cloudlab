@@ -74,7 +74,7 @@ def create_request(request, role, ip, worker_num=None):
     req.disk_image = DISK_IMG
     req.addService(pg.Execute(
         'bash',
-        "sudo /usr/local/etc/emulab/mkextrafs.pl /mnt; sudo chmod 777 -R /local /mnt; rsync -av /local/ /mnt/local/; sudo mount -o bind /mnt/local /local; sudo bash /local/repository/bootstrap.sh '{}' '{}' '{}' '{}' 2>&1 | sudo tee -a /local/logs/setup.log".format(
+        "sudo /usr/local/etc/emulab/mkextrafs.pl /mnt; sudo chmod 777 -R /local /mnt; rsync -av /local/ /mnt/local/; sudo mount -o bind /mnt/local /local; sudo bash /local/repository/bootstrap.sh '{}' '{}' '{}' '{}' '{}' 2>&1 | sudo tee -a /local/logs/setup.log".format(
             role, params.jupyterPassword, proper_key, params.GPUWorkers, params.gpadminPassword)))
     iface = req.addInterface(
         'eth1', pg.IPv4Address(ip, '255.255.255.0'))
