@@ -135,6 +135,7 @@ if [ "$duty" = "m" ]; then
             sleep 5s
         fi
     done
+    source ~/.bashrc 
     gpstop -a -M fast
     gpstart -a
     echo "GPDB INITIALIZATION FINISHED"    
