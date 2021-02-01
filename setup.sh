@@ -22,6 +22,12 @@ gdrive about
 
 
 
+# Download imagenet
+sudo chmod -R 777 /mnt/nfs
+gdrive download -r --path /mnt/nfs 1zLryoR1CjSQI9gDIdrGux6Bbm2zeAZr5 
+
+
+
 # Criteo preprocessing
 # python2 preprocessing_criteo.py --data_root '/mnt/hdd/criteo' --log_root '/mnt/nfs/logs' --nfs_root '/mnt/nfs/models/data_share/criteo/tfrecords'
 
@@ -52,10 +58,17 @@ sudo chmod -R 777 /mnt/nfs
 mkdir -p /mnt/nfs/hdd/criteo
 gdrive download -r --path /mnt/nfs/hdd/criteo 1c7UapUWys474HhbNQp5iCOEMsbJn4O_2 
 
-# run cerebro standalone (on workers)
+# run cerebro standalone 
 # cerebro standalone
+# (on everything)
+cd /local
+git clone --single-branch --branch data_pipeline_test git@github.com:scnakandala/cerebro.git
 export CEREBRO_LOG_DIR=/mnt/nfs/logs/run_logs/cerebro_run_logs
 mkdir $CEREBRO_LOG_DIR
+# (on workers)
 unset PYTHONPATH
-export PYTHONPATH="${PYTHONPATH}:/local:/local/cerebro-greenplum/code"
+export PYTHONPATH="${PYTHONPATH}:/local:/local/cerebro-greenplum"
+bash /local/cerebro/bin/cerebro_worker.sh stop
+bash /local/cerebro/bin/cerebro_worker.sh stop
 bash /local/cerebro/bin/cerebro_worker.sh start $WORKER_NAME 8000 $CEREBRO_LOG_DIR &
+tail -f /mnt/nfs/logs/run_logs/cerebro_run_logs/cerebro_log_$WORKER_NAME.log
