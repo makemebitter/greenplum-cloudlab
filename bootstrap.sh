@@ -5,6 +5,7 @@ duty=${1}
 JUPYTER_PASSWORD=${2:-"root"}
 PRIVATE_KEY=${3}
 GPU_WORKERS=${4}
+GPADMIN_PASSWORD=${5}
 FILE_PATH=/local/gphost_list
 NFS_DIR=/mnt/nfs
 PROJECT_USER=gpadmin
@@ -107,6 +108,7 @@ sudo bash /local/gpdb_src/README.ubuntu.bash
 echo /usr/local/lib | sudo tee -a  /etc/ld.so.conf
 sudo ldconfig
 sudo bash /local/gpdb_src/concourse/scripts/setup_gpadmin_user.bash
+echo "gpadmin:${GPADMIN_PASSWORD}" | sudo chpasswd
 sudo bash -c 'cat >> /etc/sysctl.conf <<-EOF
 kernel.shmmax = 500000000
 kernel.shmmni = 4096
