@@ -275,6 +275,9 @@ sudo -H -u $PROJECT_USER /local/repository/install_gpdb.sh ${duty}
 
 
 
+# install pytorch
+sudo python3.7 -m pip install torch==1.4.0 torchvision==0.5.0 -f https://download.pytorch.org/whl/cu100/torch_stable.html
+
 
 # -----------------------------------------------------------------------------
 
