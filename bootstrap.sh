@@ -352,6 +352,7 @@ if [ "$duty" = "m" ]; then
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     sudo apt-get update && sudo apt-get -y install yarn
     mkdir /local/theia
+    export PYTHONPATH="${PYTHONPATH}:/local/cerebro-greenplum:/local"
     wget https://raw.githubusercontent.com/theia-ide/theia-apps/master/theia-python-docker/latest.package.json -O /local/theia/package.json
     cd /local/theia
     yarn --cache-folder ./ycache && rm -rf ./ycache && \
