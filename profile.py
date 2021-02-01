@@ -46,7 +46,7 @@ pc.defineParameter("privateKey", "Your private ssh key, this is required for gre
                    private key and upload it also to your cloudlab account.
                    Don't use your personal private key.''')
 pc.defineParameter("gpadminPassword", "The password of gpadmin user. WARNING: use a very strong one",
-                   portal.ParameterType.STRING)
+                   portal.ParameterType.STRING, "")
 
 
 params = pc.bindParameters()
