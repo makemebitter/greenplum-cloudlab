@@ -27,7 +27,9 @@ sudo service systemd-logind restart
 echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard nofile 65536' | sudo tee -a /etc/security/limits.d/gpadmin-limits.conf
 
 
-
+# clone src
+git clone --single-branch --branch cerebro git@github.com:makemebitter/madlib.git /local/madlib
+git clone git@github.com:makemebitter/cerebro-greenplum.git /local/cerebro-greenplum
 
 # greenplum
 export DEBIAN_FRONTEND=noninteractive

@@ -100,8 +100,7 @@ sudo dpkg --configure -a
 git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
 git clone https://github.com/greenplum-db/gporca.git /local/gporca
 git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
-git clone --single-branch --branch cerebro git@github.com:makemebitter/madlib.git /local/madlib
-git clone git@github.com:makemebitter/cerebro-greenplum.git /local/cerebro-greenplum
+
 export DEBIAN_FRONTEND=noninteractive
 cd /local
 sudo bash /local/gpdb_src/README.ubuntu.bash
@@ -146,7 +145,7 @@ EOF'
 
 sudo usermod -aG sudo gpadmin
 echo "gpadmin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/gpadmin
-sudo chown gpadmin -R  /local/gpdb_src /local/gporca /local/gp-xerces /local/madlib /local/cerebro-greenplum
+sudo chown gpadmin -R  /local
 echo "gpadmin:${GPADMIN_PASSWORD}" | sudo chpasswd
 # -----------------------------------------------------------------------------
 
