@@ -28,6 +28,7 @@ echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard no
 
 
 # clone src
+ssh-keygen -F github.com || ssh-keyscan github.com >>~/.ssh/known_hosts
 git clone --single-branch --branch cerebro git@github.com:makemebitter/madlib.git /local/madlib
 git clone git@github.com:makemebitter/cerebro-greenplum.git /local/cerebro-greenplum
 
