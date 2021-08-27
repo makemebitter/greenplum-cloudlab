@@ -345,7 +345,7 @@ if [ "$duty" = "m" ]; then
     # Theia
     sudo python3.7 -m pip install python-language-server flake8 autopep8
     sudo apt-get install curl
-    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+    curl -sL https://deb.nodesource.com/setup_12.14.1 | sudo -E bash -
     sudo apt-get install -y nodejs
     sudo apt-get install libx11-dev libxkbfile-dev
     sudo apt-get install libsecret-1-dev
