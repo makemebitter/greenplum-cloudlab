@@ -345,8 +345,10 @@ if [ "$duty" = "m" ]; then
     # Theia
     sudo python3.7 -m pip install python-language-server flake8 autopep8
     sudo apt-get install curl
-    curl -sL https://deb.nodesource.com/setup_12.14.1 | sudo -E bash -
-    sudo apt-get install -y nodejs
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+    nvm install 12.14.1
+#     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+#     sudo apt-get install -y nodejs
     sudo apt-get install libx11-dev libxkbfile-dev
     sudo apt-get install libsecret-1-dev
     sudo apt-get install build-essential
@@ -355,12 +357,15 @@ if [ "$duty" = "m" ]; then
     sudo apt-get update && sudo apt-get -y install yarn
     mkdir /local/theia
     export PYTHONPATH="${PYTHONPATH}:/local/cerebro-greenplum:/local"
-    wget https://raw.githubusercontent.com/theia-ide/theia-apps/master/theia-python-docker/latest.package.json -O /local/theia/package.json
+    wget https://raw.githubusercontent.com/theia-ide/theia-apps/a83be54ff44f087c87d8652f05ec73538ea055f7/theia-python-docker/latest.package.json -O
+ /local/theia/package.json
+#     wget https://raw.githubusercontent.com/theia-ide/theia-apps/master/theia-python-docker/latest.package.json -O /local/theia/package.json
     cd /local/theia
     yarn --cache-folder ./ycache && rm -rf ./ycache && \
      NODE_OPTIONS="--max_old_space_size=4096" yarn theia build ; \
     yarn theia download:plugins
     export THEIA_DEFAULT_PLUGINS=local-dir:/local/theia/plugins
+    # if no plugin loaded, get rid of sudo
     sudo nohup yarn theia start / --hostname=127.0.0.1 > /local/logs/theia.log 2>&1 &
     
     # sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /local/logs/theia.log 2>&1 &
