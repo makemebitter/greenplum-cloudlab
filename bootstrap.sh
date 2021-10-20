@@ -158,6 +158,8 @@ ssh-keygen -y -f /local/gpdb_key >> /home/gpadmin/.ssh/authorized_keys
 
 sudo mkdir /mnt/gpdata
 sudo chown gpadmin /mnt/gpdata
+sudo mkdir /mnt/hdd
+sudo chown gpadmin /mnt/hdd
 if [ "$duty" = "m" ]; then
   sudo mkdir /mnt/gpdata_master
   sudo chown gpadmin /mnt/gpdata_master
@@ -188,6 +190,7 @@ set -e
 
 # install madlib dependencies
 echo "/usr/local/cuda/extras/CUPTI/lib64" | sudo tee -a /etc/ld.so.conf
+
 sudo rm -rvf /usr/lib/python2.7/dist-packages/OpenSSL
 sudo pip install -U pyopenssl
 sudo pip install --upgrade "pip < 21.0"
@@ -230,8 +233,8 @@ if [ "$duty" = "s" ] && [ $GPU_WORKERS -eq 1 ]; then
 
 
     # # CUDA 10.1
-    # Add NVIDIA package repositories
-    # Add HTTPS support for apt-key
+    # # Add NVIDIA package repositories
+    # # Add HTTPS support for apt-key
     # sudo apt-get -y install gnupg-curl
     # wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_10.1.243-1_amd64.deb
     # sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
@@ -266,7 +269,7 @@ sudo ldconfig
 
 
 sudo pip install -r /local/repository/requirements_madlib.txt
-
+sudo python2 -m pip install torch==1.4.0 torchvision==0.5.0 -f https://download.pytorch.org/whl/cu100/torch_stable.html
 
 
 # compile, install, and run gpdb, compile and install madlib
@@ -275,8 +278,9 @@ sudo -H -u $PROJECT_USER /local/repository/install_gpdb.sh ${duty}
 
 
 # install pytorch
+sudo python3.7 -m pip install --upgrade setuptools
 sudo python3.7 -m pip install torch==1.4.0 torchvision==0.5.0 -f https://download.pytorch.org/whl/cu100/torch_stable.html
-sudo python3.7 -m pip install torchsummary
+sudo python3.7 -m pip install dill torchsummary psycopg2-binary pandas tensorflow-gpu==1.14.0 keras==2.2.5 netifaces hyperopt==0.2.4 image-classifiers h5py==2.9.0
 
 # -----------------------------------------------------------------------------
 
@@ -337,7 +341,7 @@ if [ "$duty" = "m" ]; then
     # Jupyter password
     mkdir -p ~/.jupyter;
     sudo python2 -m pip --use-feature=2020-resolver install ipykernel
-    sudo python2 -m ipykernel install --user
+    sudo python2 -m ipykernel install
     HASHED_PASSWORD=$(python3.7 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
     echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
     echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;

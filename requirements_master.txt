@@ -5,9 +5,7 @@ jupyter_nbextensions_configurator
 ipython-sql
 psycopg2-binary
 yapf
-Keras==2.2.5
 grpcio==1.26.0
-tensorflow==1.14
 Pillow==7.1.1
 pandas==0.25.3
 matplotlib==3.0.3
@@ -15,3 +13,4 @@ seaborn
 dill
 bitstruct
 pylint
+image-classifiers
