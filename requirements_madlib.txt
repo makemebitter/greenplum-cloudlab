@@ -4,7 +4,7 @@ Scipy==1.2.1
 Keras==2.2.5
 hyperopt==0.2.4
 grpcio==1.26.0
-tensorflow-gpu==1.14
+tensorflow-gpu==2.5.1
 psycopg2-binary
 dill
 pandas
