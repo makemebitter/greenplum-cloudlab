@@ -1,4 +1,4 @@
-ipython==7.9.0
+ipython==7.16.3
 jupyter
 jupyter_contrib_nbextensions
 jupyter_nbextensions_configurator
