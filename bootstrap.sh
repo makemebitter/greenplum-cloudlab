@@ -22,7 +22,17 @@ sudo apt-get install -y \
     curl \
     gnupg-agent \
     software-properties-common \
-    sysstat
+    sysstat \
+    ufw
+
+# firewall
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow 22/tcp
+sudo ufw allow from 10.10.1.0/24
+sudo ufw enable
+sudo systemctl enable ufw
+sudo systemctl restart sshd 
 
 
 # python 3.7
