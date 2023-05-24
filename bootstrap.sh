@@ -112,6 +112,10 @@ git clone https://github.com/greenplum-db/gporca.git /local/gporca
 git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
 
 export DEBIAN_FRONTEND=noninteractive
+cd /local/gpdb_src
+git reset --hard HEAD
+git checkout 6117a957007f1f2f402c0c2581e6078e4b284b41
+
 cd /local
 sudo bash /local/gpdb_src/README.ubuntu.bash
 echo /usr/local/lib | sudo tee -a  /etc/ld.so.conf
