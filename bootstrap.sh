@@ -165,8 +165,8 @@ echo "gpadmin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/gpadmin
 sudo chown gpadmin -R  /local
 echo "gpadmin:${GPADMIN_PASSWORD}" | sudo chpasswd
 
-cp /local/cloudlab-personal-profiles/.screenrc /home/$PROJECT_USER
-cat /local/cloudlab-personal-profiles/bashrc | sudo tee -a /home/$PROJECT_USER/.bashrc
+sudo cp /local/cloudlab-personal-profiles/.screenrc /home/$PROJECT_USER
+
 # -----------------------------------------------------------------------------
 
 # greenplum key
