@@ -114,7 +114,7 @@ git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
 export DEBIAN_FRONTEND=noninteractive
 cd /local/gpdb_src
 git reset --hard HEAD
-git checkout 6117a957007f1f2f402c0c2581e6078e4b284b41
+git checkout 810a6d2
 
 cd /local
 sudo bash /local/gpdb_src/README.ubuntu.bash
