@@ -123,6 +123,7 @@ cd /local
 sudo bash /local/gpdb_src/README.ubuntu.bash
 echo /usr/local/lib | sudo tee -a  /etc/ld.so.conf
 sudo ldconfig
+
 sudo bash /local/gpdb_src/concourse/scripts/setup_gpadmin_user.bash
 sudo bash -c 'cat >> /etc/sysctl.conf <<-EOF
 kernel.shmmax = 500000000

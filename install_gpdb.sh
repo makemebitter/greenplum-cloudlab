@@ -21,6 +21,8 @@ shopt -s histappend                      # append to history, dont overwrite it
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 EOF'
 
+cat /users/yhzhang/.bashrc | sudo tee -a ~/.bashrc
+
 source ~/.bashrc
 echo "RemoveIPC=no" | sudo tee -a /etc/systemd/logind.conf
 sudo service systemd-logind restart
@@ -76,7 +78,9 @@ sudo chown -R gpadmin:gpadmin /usr/local/gpdb
 sudo pip install paramiko;
 
 
+
 # madlib
+sudo apt-get install -y libboost-all-dev
 cd /local/madlib;
 mkdir build;
 cd build;
