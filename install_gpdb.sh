@@ -39,14 +39,15 @@ export DEBIAN_FRONTEND=noninteractive
 cd /local/gp-xerces
 mkdir build
 cd build
-../configure --prefix=/usr/local/gpdb
+../configure --prefix=/usr/local
 make
 sudo make install
 
 # gp-orca 
 cd /local/gporca
 git checkout 1c280c0f2e657511a4be50866baaf2e8b4411cb7
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local -GNinja -H. -Bbuild 
+# -DCMAKE_INSTALL_PREFIX=/usr/local/gpdb 
+cmake -GNinja -H. -Bbuild 
 set +e
 # run twice for bypassing ccache issue, first run will create the needed files
 sudo ninja install -C build
@@ -73,6 +74,7 @@ source ~/.bashrc
 sudo chown -R gpadmin:gpadmin /usr/local/gpdb
 # important missing dependency
 sudo pip install paramiko;
+
 
 # madlib
 cd /local/madlib;

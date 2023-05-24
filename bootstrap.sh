@@ -23,7 +23,8 @@ sudo apt-get install -y \
     gnupg-agent \
     software-properties-common \
     sysstat \
-    ufw
+    ufw \
+    libboost-all-dev
 
 # firewall
 sudo ufw default deny incoming
@@ -111,6 +112,8 @@ git clone https://github.com/greenplum-db/gpdb.git  /local/gpdb_src
 git clone https://github.com/greenplum-db/gporca.git /local/gporca
 git clone https://github.com/greenplum-db/gp-xerces.git /local/gp-xerces
 
+git clone https://github.com/makemebitter/cloudlab-personal-profiles.git /local/cloudlab-personal-profiles
+
 export DEBIAN_FRONTEND=noninteractive
 cd /local/gpdb_src
 git reset --hard HEAD
@@ -161,6 +164,9 @@ sudo usermod -aG sudo gpadmin
 echo "gpadmin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/gpadmin
 sudo chown gpadmin -R  /local
 echo "gpadmin:${GPADMIN_PASSWORD}" | sudo chpasswd
+
+cp /local/cloudlab-personal-profiles/.screenrc /home/$PROJECT_USER
+cat /local/cloudlab-personal-profiles/bashrc | sudo tee -a /home/$PROJECT_USER/.bashrc
 # -----------------------------------------------------------------------------
 
 # greenplum key
