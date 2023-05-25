@@ -85,8 +85,12 @@ cd /local/madlib;
 mkdir build;
 cd build;
 cmake ..;
+
+set +e
+# first time would fail due to boost and then it will download the correct one
 make -j;
 make -j;
+set -e
 
 
 
