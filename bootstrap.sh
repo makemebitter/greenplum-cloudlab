@@ -299,7 +299,8 @@ sudo -H -u $PROJECT_USER /local/repository/install_gpdb.sh ${duty}
 
 
 # install pytorch
-sudo python3.7 -m pip install --upgrade setuptools
+sudo python3.7 -m pip install --upgrade setuptools==63
+sudo python3.7 -m pip install --upgrade pip
 sudo python3.7 -m pip install torch==1.4.0 torchvision==0.5.0 -f https://download.pytorch.org/whl/cu100/torch_stable.html
 sudo python3.7 -m pip install dill torchsummary psycopg2-binary pandas tensorflow-gpu==1.14.0 keras==2.2.5 netifaces hyperopt==0.2.4 image-classifiers h5py==2.9.0
 
@@ -345,20 +346,20 @@ if [ "$duty" = "m" ]; then
     sudo python3.7 -m jupyter nbextension enable freeze/main --system ;
     sudo python3.7 -m jupyter nbextension enable spellchecker/main --system ;
     # docker
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository -y \
-    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-    $(lsb_release -cs) \
-    stable"
-    sudo apt-get update
-    sudo apt-get -y install docker-ce docker-ce-cli containerd.io
-    echo 'DOCKER_OPTS="-g /mnt"' | sudo tee -a /etc/default/docker
-    sudo service docker stop
-    sudo service docker start
-    sudo mkdir /mnt/var.lib.docker
-    sudo rsync -av /var/lib/docker/ /mnt/var.lib.docker/
-    sudo rm -rvf /var/lib/docker/*
-    sudo mount -o bind /mnt/var.lib.docker/ /var/lib/docker/
+    # curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    # sudo add-apt-repository -y \
+    # "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+    # $(lsb_release -cs) \
+    # stable"
+    # sudo apt-get update
+    # sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+    # echo 'DOCKER_OPTS="-g /mnt"' | sudo tee -a /etc/default/docker
+    # sudo service docker stop
+    # sudo service docker start
+    # sudo mkdir /mnt/var.lib.docker
+    # sudo rsync -av /var/lib/docker/ /mnt/var.lib.docker/
+    # sudo rm -rvf /var/lib/docker/*
+    # sudo mount -o bind /mnt/var.lib.docker/ /var/lib/docker/
     # Jupyter password
     mkdir -p ~/.jupyter;
     sudo python2 -m pip --use-feature=2020-resolver install ipykernel
@@ -366,7 +367,7 @@ if [ "$duty" = "m" ]; then
     HASHED_PASSWORD=$(python3.7 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))");
     echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >~/.jupyter/jupyter_notebook_config.py;
     echo "c.NotebookApp.open_browser = False" >>~/.jupyter/jupyter_notebook_config.py;
-    sudo nohup jupyter notebook --no-browser --allow-root --ip 0.0.0.0 --notebook-dir=/ > /local/logs/jupyter.log 2>&1 &
+    sudo nohup jupyter notebook --no-browser --allow-root --ip 127.0.0.0 --notebook-dir=/ > /local/logs/jupyter.log 2>&1 &
     # Theia
     sudo python3.7 -m pip install python-language-server flake8 autopep8
     sudo apt-get install curl
@@ -374,20 +375,21 @@ if [ "$duty" = "m" ]; then
     nvm install 12.14.1
 #     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 #     sudo apt-get install -y nodejs
-    sudo apt-get install libx11-dev libxkbfile-dev
-    sudo apt-get install libsecret-1-dev
-    sudo apt-get install build-essential
+    sudo apt-get install -y libx11-dev libxkbfile-dev
+    sudo apt-get install -y libsecret-1-dev
+    sudo apt-get install -y build-essential
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     sudo apt-get update && sudo apt-get -y install yarn
     mkdir /local/theia
     export PYTHONPATH="${PYTHONPATH}:/local/cerebro-greenplum:/local"
-    wget https://raw.githubusercontent.com/theia-ide/theia-apps/a83be54ff44f087c87d8652f05ec73538ea055f7/theia-python-docker/latest.package.json -O
- /local/theia/package.json
+    # wget https://raw.githubusercontent.com/theia-ide/theia-apps/a83be54ff44f087c87d8652f05ec73538ea055f7/theia-python-docker/latest.package.json -O /local/theia/package.json
+    cp /local/cloudlab-personal-profiles/latest.package.json /local/theia/package.json
+    # cp /local/cloudlab-personal-profiles/yarn.lock /local/theia/
 #     wget https://raw.githubusercontent.com/theia-ide/theia-apps/master/theia-python-docker/latest.package.json -O /local/theia/package.json
     cd /local/theia
-    yarn --cache-folder ./ycache && rm -rf ./ycache && \
-     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build ; \
+    yarn --frozen-lockfile install && \
+    NODE_OPTIONS="--max_old_space_size=8192" yarn theia build ; \
     yarn theia download:plugins
     export THEIA_DEFAULT_PLUGINS=local-dir:/local/theia/plugins
     # if no plugin loaded, get rid of sudo
