@@ -24,7 +24,7 @@ sudo apt-get install -y \
     software-properties-common \
     sysstat \
     ufw \
-    libboost-all-dev1.65
+    libboost-all-dev
 
 # firewall
 sudo ufw default deny incoming
