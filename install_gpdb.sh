@@ -78,7 +78,7 @@ sudo chown -R gpadmin:gpadmin /usr/local/gpdb
 sudo pip install paramiko;
 
 
-
+source /usr/local/gpdb/greenplum_path.sh
 # madlib
 sudo apt-get install -y libboost-all-dev
 cd /local/madlib;
