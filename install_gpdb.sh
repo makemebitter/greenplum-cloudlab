@@ -70,7 +70,7 @@ git checkout 6117a957007f1f2f402c0c2581e6078e4b284b41
 ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
 make -j
 sudo make -j install
-source /usr/local/gpdb/bin/generate-greenplum-path.sh
+. /usr/local/gpdb/bin/generate-greenplum-path.sh
 echo 'source /usr/local/gpdb/greenplum_path.sh' >> ~/.bashrc
 source ~/.bashrc
 sudo chown -R gpadmin:gpadmin /usr/local/gpdb
@@ -101,7 +101,10 @@ make -j;
 
 
 
-echo "GPDB INSTALLATION FINISHED"s
+echo "GPDB INSTALLATION FINISHED"
+echo $PATH
+source /usr/local/gpdb/greenplum_path.sh
+echo $PATH
 if [ "$duty" = "m" ]; then
     readarray -t hosts < $FILE_PATH
     while true; do
