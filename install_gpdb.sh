@@ -70,8 +70,10 @@ git checkout 6117a957007f1f2f402c0c2581e6078e4b284b41
 ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/gpdb
 make -j
 sudo make -j install
+
 . /usr/local/gpdb/bin/generate-greenplum-path.sh
 echo 'source /usr/local/gpdb/greenplum_path.sh' >> ~/.bashrc
+echo 'export MASTER_DATA_DIRECTORY=/mnt/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
 source ~/.bashrc
 sudo chown -R gpadmin:gpadmin /usr/local/gpdb
 # important missing dependency
@@ -143,7 +145,6 @@ if [ "$duty" = "m" ]; then
             gpstart -a
             echo $?
             set -e
-            echo 'export MASTER_DATA_DIRECTORY=/mnt/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
             /local/madlib/build/src/bin/madpack -p greenplum -c gpadmin@master:5432/cerebro install
 
             break
