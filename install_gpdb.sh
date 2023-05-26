@@ -73,9 +73,9 @@ sudo make -j install
 
 . /usr/local/gpdb/bin/generate-greenplum-path.sh
 echo 'source /usr/local/gpdb/greenplum_path.sh' >> ~/.bashrc
-echo 'export MASTER_DATA_DIRECTORY=/mnt/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
 source ~/.bashrc
 sudo chown -R gpadmin:gpadmin /usr/local/gpdb
+echo 'export MASTER_DATA_DIRECTORY=/mnt/gpdata_master/gpseg-1' >> /usr/local/gpdb/greenplum_path.sh
 # important missing dependency
 sudo pip install paramiko;
 
