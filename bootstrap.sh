@@ -26,7 +26,8 @@ sudo apt-get install -y \
     ufw \
     libboost-all-dev \
     libsecret-1-dev \
-    gawk
+    gawk \
+    jq
 
 # firewall
 sudo ufw default deny incoming
@@ -372,35 +373,35 @@ if [ "$duty" = "m" ]; then
     sudo nohup jupyter notebook --no-browser --allow-root --ip 127.0.0.0 --notebook-dir=/ > /local/logs/jupyter.log 2>&1 &
     # Theia
     sudo python3.7 -m pip install python-language-server flake8 autopep8
-    sudo apt-get install curl
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-    source ~/.bashrc
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+#     sudo apt-get install curl
+#     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+#     source ~/.bashrc
+#     export NVM_DIR="$HOME/.nvm"
+#     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-    nvm install 12.14.1
-#     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-#     sudo apt-get install -y nodejs
-    sudo apt-get install -y libx11-dev libxkbfile-dev
-    sudo apt-get install -y libsecret-1-dev
-    sudo apt-get install -y build-essential
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    sudo apt-get update && sudo apt-get -y install yarn
-    mkdir /local/theia
+#     nvm install 12.14.1
+# #     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+# #     sudo apt-get install -y nodejs
+#     sudo apt-get install -y libx11-dev libxkbfile-dev
+#     sudo apt-get install -y libsecret-1-dev
+#     sudo apt-get install -y build-essential
+#     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+#     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+#     sudo apt-get update && sudo apt-get -y install yarn
+#     mkdir /local/theia
     export PYTHONPATH="${PYTHONPATH}:/local/cerebro-greenplum:/local"
-    # wget https://raw.githubusercontent.com/theia-ide/theia-apps/a83be54ff44f087c87d8652f05ec73538ea055f7/theia-python-docker/latest.package.json -O /local/theia/package.json
-    cp /local/cloudlab-personal-profiles/latest.package.json /local/theia/package.json
-    cp /local/cloudlab-personal-profiles/yarn.lock /local/theia/
-#     wget https://raw.githubusercontent.com/theia-ide/theia-apps/master/theia-python-docker/latest.package.json -O /local/theia/package.json
-    cd /local/theia
-    yarn --frozen-lockfile install && \
-    NODE_OPTIONS="--max_old_space_size=8192" yarn theia build ; \
-    yarn theia download:plugins
-    export THEIA_DEFAULT_PLUGINS=local-dir:/local/theia/plugins
-    # if no plugin loaded, get rid of sudo
-    nohup yarn theia start / --hostname=127.0.0.1 > /local/logs/theia.log 2>&1 &
+#     # wget https://raw.githubusercontent.com/theia-ide/theia-apps/a83be54ff44f087c87d8652f05ec73538ea055f7/theia-python-docker/latest.package.json -O /local/theia/package.json
+#     cp /local/cloudlab-personal-profiles/latest.package.json /local/theia/package.json
+#     cp /local/cloudlab-personal-profiles/yarn.lock /local/theia/
+# #     wget https://raw.githubusercontent.com/theia-ide/theia-apps/master/theia-python-docker/latest.package.json -O /local/theia/package.json
+#     cd /local/theia
+#     yarn --frozen-lockfile install && \
+#     NODE_OPTIONS="--max_old_space_size=8192" yarn theia build ; \
+#     yarn theia download:plugins
+#     export THEIA_DEFAULT_PLUGINS=local-dir:/local/theia/plugins
+#     # if no plugin loaded, get rid of sudo
+    nohup theia start / --hostname=127.0.0.1 > /local/logs/theia.log 2>&1 &
     
     # sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /local/logs/theia.log 2>&1 &
     

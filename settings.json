@@ -1,0 +1,10 @@
+{
+    "python.pythonPath": "/usr/bin/python3.7",
+    "python.linting.pylintArgs": [
+        "--generated-members",
+        "torch.*"
+    ],
+    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": false,
+    "editor.rulers": [80]
+}

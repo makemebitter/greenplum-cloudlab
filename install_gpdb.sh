@@ -23,6 +23,8 @@ EOF'
 
 cat /users/yhzhang/.bashrc | sudo tee -a ~/.bashrc
 
+
+
 source ~/.bashrc
 echo "RemoveIPC=no" | sudo tee -a /etc/systemd/logind.conf
 sudo service systemd-logind restart
@@ -33,6 +35,7 @@ echo -e 'gpadmin hard core unlimited\ngpadmin hard nproc 131072\ngpadmin hard no
 ssh-keygen -F github.com || ssh-keyscan github.com >>~/.ssh/known_hosts
 git clone --single-branch --branch cerebro git@github.com:makemebitter/madlib.git /local/madlib
 git clone git@github.com:makemebitter/cerebro-greenplum.git /local/cerebro-greenplum
+git clone https://github.com/makemebitter/theia-ide.git /local/theia
 
 # greenplum
 export DEBIAN_FRONTEND=noninteractive
@@ -93,6 +96,11 @@ set +e
 make -j;
 make -j;
 set -e
+
+
+# theia
+cd /local/theia
+bash install.sh download '/usr/bin/python3.7'
 
 
 
