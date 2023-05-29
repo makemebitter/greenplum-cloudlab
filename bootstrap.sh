@@ -25,7 +25,8 @@ sudo apt-get install -y \
     sysstat \
     ufw \
     libboost-all-dev \
-    libsecret-1-dev
+    libsecret-1-dev \
+    gawk
 
 # firewall
 sudo ufw default deny incoming
