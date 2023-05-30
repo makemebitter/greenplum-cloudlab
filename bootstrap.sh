@@ -401,7 +401,7 @@ if [ "$duty" = "m" ]; then
 #     yarn theia download:plugins
 #     export THEIA_DEFAULT_PLUGINS=local-dir:/local/theia/plugins
 #     # if no plugin loaded, get rid of sudo
-    nohup theia start / --hostname=127.0.0.1 > /local/logs/theia.log 2>&1 &
+    
     
     # sudo nohup docker run --init -p 3000:3000 -v "/:/home/project:cached" theiaide/theia-python:next > /local/logs/theia.log 2>&1 &
     

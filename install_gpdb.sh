@@ -100,7 +100,8 @@ set -e
 
 # theia
 cd /local/theia
-bash install.sh download '/usr/bin/python3.7'
+bash install.sh compile '/usr/bin/python3.7'
+# nohup theia start / --hostname=127.0.0.1 > /local/logs/theia.log 2>&1 &
 
 
 
